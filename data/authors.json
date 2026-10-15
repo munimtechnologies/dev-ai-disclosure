@@ -1,0 +1,32 @@
+{
+  "authors": 50138,
+  "by_level": {
+    "fully_autonomous": {
+      "authors": 1391,
+      "posts": 3647,
+      "top10_authors_share": 0.249,
+      "authors_for_half_of_posts": 109
+    },
+    "no_ai": {
+      "authors": 580,
+      "posts": 881,
+      "top10_authors_share": 0.175,
+      "authors_for_half_of_posts": 140
+    },
+    "not_disclosed": {
+      "authors": 46837,
+      "posts": 291657,
+      "top10_authors_share": 0.066,
+      "authors_for_half_of_posts": 1422
+    },
+    "some_ai": {
+      "authors": 3201,
+      "posts": 7886,
+      "top10_authors_share": 0.321,
+      "authors_for_half_of_posts": 165
+    }
+  },
+  "authors_with_any_label": 4937,
+  "authors_with_two_or_more_labels": 229,
+  "authors_mixing_labelled_and_undisclosed": 1636
+}

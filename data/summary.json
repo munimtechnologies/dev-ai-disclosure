@@ -1,0 +1,716 @@
+{
+  "meta": {
+    "snapshot_at": "2026-10-14T19:01:29+00:00",
+    "finished_at": "2026-10-14T19:45:02+00:00",
+    "since": "2026-08-12",
+    "launch": "2026-08-26T18:05:39+00:00",
+    "launch_source": "article 4419574",
+    "pages": 417,
+    "per_page": 1000,
+    "posts": 414144,
+    "oldest": "2026-08-12T00:00:00+00:00",
+    "newest": "2026-10-14T19:01:31+00:00",
+    "stopped": "reached --since",
+    "requests": 418,
+    "minutes": 43.5
+  },
+  "launch": "2026-08-26T18:05:39+00:00",
+  "engagement_cutoff": "2026-10-07T19:01:29+00:00",
+  "before_launch": {
+    "posts": 110073,
+    "not_disclosed": 0.9993,
+    "no_ai": 0.0002,
+    "some_ai": 0.0003,
+    "fully_autonomous": 0.0002,
+    "any_label": 0.0007,
+    "labelled_and_edited_after_launch": 75,
+    "labelled": 76
+  },
+  "since_launch": {
+    "posts": 304071,
+    "not_disclosed": 0.9592,
+    "no_ai": 0.0029,
+    "some_ai": 0.0259,
+    "fully_autonomous": 0.012,
+    "any_label": 0.0408,
+    "counts": {
+      "fully_autonomous": 3647,
+      "no_ai": 881,
+      "not_disclosed": 291657,
+      "some_ai": 7886
+    }
+  },
+  "weekly": [
+    {
+      "week": "2026-08-12",
+      "days": 7,
+      "posts": 50427,
+      "not_disclosed": 0.9991,
+      "no_ai": 0.0002,
+      "some_ai": 0.0003,
+      "fully_autonomous": 0.0004,
+      "any_label": 0.0009
+    },
+    {
+      "week": "2026-08-19",
+      "days": 7,
+      "posts": 52683,
+      "not_disclosed": 0.9995,
+      "no_ai": 0.0002,
+      "some_ai": 0.0002,
+      "fully_autonomous": 0.0001,
+      "any_label": 0.0005
+    },
+    {
+      "week": "2026-08-26",
+      "days": 7,
+      "posts": 51654,
+      "not_disclosed": 0.9864,
+      "no_ai": 0.0017,
+      "some_ai": 0.0093,
+      "fully_autonomous": 0.0025,
+      "any_label": 0.0136
+    },
+    {
+      "week": "2026-09-02",
+      "days": 7,
+      "posts": 48881,
+      "not_disclosed": 0.9793,
+      "no_ai": 0.0023,
+      "some_ai": 0.0133,
+      "fully_autonomous": 0.0052,
+      "any_label": 0.0207
+    },
+    {
+      "week": "2026-09-09",
+      "days": 7,
+      "posts": 45835,
+      "not_disclosed": 0.9759,
+      "no_ai": 0.0024,
+      "some_ai": 0.0142,
+      "fully_autonomous": 0.0074,
+      "any_label": 0.0241
+    },
+    {
+      "week": "2026-09-16",
+      "days": 7,
+      "posts": 51881,
+      "not_disclosed": 0.9777,
+      "no_ai": 0.0026,
+      "some_ai": 0.0129,
+      "fully_autonomous": 0.0067,
+      "any_label": 0.0223
+    },
+    {
+      "week": "2026-09-23",
+      "days": 7,
+      "posts": 49216,
+      "not_disclosed": 0.9308,
+      "no_ai": 0.0026,
+      "some_ai": 0.0558,
+      "fully_autonomous": 0.0107,
+      "any_label": 0.0692
+    },
+    {
+      "week": "2026-09-30",
+      "days": 7,
+      "posts": 28377,
+      "not_disclosed": 0.9301,
+      "no_ai": 0.0047,
+      "some_ai": 0.043,
+      "fully_autonomous": 0.0222,
+      "any_label": 0.0699
+    },
+    {
+      "week": "2026-10-07",
+      "days": 7,
+      "posts": 31106,
+      "not_disclosed": 0.9155,
+      "no_ai": 0.0049,
+      "some_ai": 0.0417,
+      "fully_autonomous": 0.038,
+      "any_label": 0.0845
+    },
+    {
+      "week": "2026-10-14",
+      "days": 1,
+      "posts": 4084,
+      "not_disclosed": 0.8957,
+      "no_ai": 0.0049,
+      "some_ai": 0.0429,
+      "fully_autonomous": 0.0566,
+      "any_label": 0.1043
+    }
+  ],
+  "engagement_all": {
+    "not_disclosed": {
+      "posts": 263122,
+      "mean_day_percentile": 0.497,
+      "z": -4.62,
+      "mean_reactions": 0.29,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.917,
+      "mean_comments": 0.15,
+      "share_zero_comments": 0.947
+    },
+    "some_ai": {
+      "posts": 6552,
+      "mean_day_percentile": 0.58,
+      "z": 22.42,
+      "mean_reactions": 2.38,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.749,
+      "mean_comments": 1.14,
+      "share_zero_comments": 0.791
+    },
+    "fully_autonomous": {
+      "posts": 2308,
+      "mean_day_percentile": 0.519,
+      "z": 3.12,
+      "mean_reactions": 0.27,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.854,
+      "mean_comments": 0.31,
+      "share_zero_comments": 0.843
+    },
+    "no_ai": {
+      "posts": 730,
+      "mean_day_percentile": 0.661,
+      "z": 15.03,
+      "mean_reactions": 3.95,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.59,
+      "mean_comments": 2.06,
+      "share_zero_comments": 0.748
+    }
+  },
+  "engagement_english": {
+    "not_disclosed": {
+      "posts": 240708,
+      "mean_day_percentile": 0.497,
+      "z": -4.75,
+      "mean_reactions": 0.31,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.913,
+      "mean_comments": 0.16,
+      "share_zero_comments": 0.945
+    },
+    "some_ai": {
+      "posts": 6268,
+      "mean_day_percentile": 0.583,
+      "z": 22.66,
+      "mean_reactions": 2.47,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.741,
+      "mean_comments": 1.18,
+      "share_zero_comments": 0.784
+    },
+    "fully_autonomous": {
+      "posts": 2221,
+      "mean_day_percentile": 0.518,
+      "z": 2.94,
+      "mean_reactions": 0.28,
+      "median_reactions": 0,
+      "share_zero_reactions": 0.851,
+      "mean_comments": 0.32,
+      "share_zero_comments": 0.838
+    },
+    "no_ai": {
+      "posts": 698,
+      "mean_day_percentile": 0.665,
+      "z": 15.08,
+      "mean_reactions": 4.12,
+      "median_reactions": 0.0,
+      "share_zero_reactions": 0.579,
+      "mean_comments": 2.15,
+      "share_zero_comments": 0.739
+    }
+  },
+  "traits": {
+    "not_disclosed": {
+      "posts": 291657,
+      "median_reading_minutes": 3,
+      "share_english": 0.916,
+      "share_cover_image": 0.212,
+      "share_organisation": 0.014,
+      "share_crossposted": 0.232,
+      "share_no_tags": 0.304
+    },
+    "fully_autonomous": {
+      "posts": 3647,
+      "median_reading_minutes": 3,
+      "share_english": 0.967,
+      "share_cover_image": 0.363,
+      "share_organisation": 0.033,
+      "share_crossposted": 0.257,
+      "share_no_tags": 0.023
+    },
+    "some_ai": {
+      "posts": 7886,
+      "median_reading_minutes": 4.0,
+      "share_english": 0.959,
+      "share_cover_image": 0.402,
+      "share_organisation": 0.032,
+      "share_crossposted": 0.176,
+      "share_no_tags": 0.017
+    },
+    "no_ai": {
+      "posts": 881,
+      "median_reading_minutes": 4,
+      "share_english": 0.959,
+      "share_cover_image": 0.596,
+      "share_organisation": 0.037,
+      "share_crossposted": 0.202,
+      "share_no_tags": 0.068
+    }
+  },
+  "hf26challenge": {
+    "posts": 3766,
+    "not_disclosed": 0.82,
+    "no_ai": 0.008,
+    "some_ai": 0.1397,
+    "fully_autonomous": 0.0324,
+    "any_label": 0.18
+  },
+  "authors": {
+    "authors": 50138,
+    "by_level": {
+      "fully_autonomous": {
+        "authors": 1391,
+        "posts": 3647,
+        "top10_authors_share": 0.249,
+        "authors_for_half_of_posts": 109
+      },
+      "no_ai": {
+        "authors": 580,
+        "posts": 881,
+        "top10_authors_share": 0.175,
+        "authors_for_half_of_posts": 140
+      },
+      "not_disclosed": {
+        "authors": 46837,
+        "posts": 291657,
+        "top10_authors_share": 0.066,
+        "authors_for_half_of_posts": 1422
+      },
+      "some_ai": {
+        "authors": 3201,
+        "posts": 7886,
+        "top10_authors_share": 0.321,
+        "authors_for_half_of_posts": 165
+      }
+    },
+    "authors_with_any_label": 4937,
+    "authors_with_two_or_more_labels": 229,
+    "authors_mixing_labelled_and_undisclosed": 1636
+  },
+  "top_tags": [
+    {
+      "tag": "ai",
+      "posts": 62042,
+      "not_disclosed": 0.9337,
+      "no_ai": 0.0049,
+      "some_ai": 0.0438,
+      "fully_autonomous": 0.0176,
+      "any_label": 0.0663
+    },
+    {
+      "tag": "webdev",
+      "posts": 29157,
+      "not_disclosed": 0.9269,
+      "no_ai": 0.0059,
+      "some_ai": 0.0385,
+      "fully_autonomous": 0.0286,
+      "any_label": 0.0731
+    },
+    {
+      "tag": "productivity",
+      "posts": 21722,
+      "not_disclosed": 0.9475,
+      "no_ai": 0.004,
+      "some_ai": 0.0313,
+      "fully_autonomous": 0.0172,
+      "any_label": 0.0525
+    },
+    {
+      "tag": "programming",
+      "posts": 17081,
+      "not_disclosed": 0.931,
+      "no_ai": 0.009,
+      "some_ai": 0.04,
+      "fully_autonomous": 0.02,
+      "any_label": 0.069
+    },
+    {
+      "tag": "security",
+      "posts": 14443,
+      "not_disclosed": 0.9475,
+      "no_ai": 0.0033,
+      "some_ai": 0.0325,
+      "fully_autonomous": 0.0167,
+      "any_label": 0.0525
+    },
+    {
+      "tag": "tutorial",
+      "posts": 13302,
+      "not_disclosed": 0.9447,
+      "no_ai": 0.0021,
+      "some_ai": 0.0241,
+      "fully_autonomous": 0.0292,
+      "any_label": 0.0553
+    },
+    {
+      "tag": "opensource",
+      "posts": 13162,
+      "not_disclosed": 0.9088,
+      "no_ai": 0.0068,
+      "some_ai": 0.0591,
+      "fully_autonomous": 0.0254,
+      "any_label": 0.0912
+    },
+    {
+      "tag": "python",
+      "posts": 12678,
+      "not_disclosed": 0.9322,
+      "no_ai": 0.0046,
+      "some_ai": 0.0386,
+      "fully_autonomous": 0.0245,
+      "any_label": 0.0678
+    },
+    {
+      "tag": "devops",
+      "posts": 10747,
+      "not_disclosed": 0.9253,
+      "no_ai": 0.0046,
+      "some_ai": 0.0445,
+      "fully_autonomous": 0.0257,
+      "any_label": 0.0747
+    },
+    {
+      "tag": "automation",
+      "posts": 8977,
+      "not_disclosed": 0.9595,
+      "no_ai": 0.0025,
+      "some_ai": 0.0183,
+      "fully_autonomous": 0.0198,
+      "any_label": 0.0405
+    },
+    {
+      "tag": "api",
+      "posts": 7904,
+      "not_disclosed": 0.9408,
+      "no_ai": 0.0063,
+      "some_ai": 0.0238,
+      "fully_autonomous": 0.0291,
+      "any_label": 0.0592
+    },
+    {
+      "tag": "javascript",
+      "posts": 7776,
+      "not_disclosed": 0.9104,
+      "no_ai": 0.006,
+      "some_ai": 0.046,
+      "fully_autonomous": 0.0376,
+      "any_label": 0.0896
+    },
+    {
+      "tag": "architecture",
+      "posts": 7218,
+      "not_disclosed": 0.9329,
+      "no_ai": 0.0065,
+      "some_ai": 0.0463,
+      "fully_autonomous": 0.0143,
+      "any_label": 0.0671
+    },
+    {
+      "tag": "beginners",
+      "posts": 6918,
+      "not_disclosed": 0.9282,
+      "no_ai": 0.0085,
+      "some_ai": 0.0345,
+      "fully_autonomous": 0.0288,
+      "any_label": 0.0718
+    },
+    {
+      "tag": "seo",
+      "posts": 6542,
+      "not_disclosed": 0.9705,
+      "no_ai": 0.002,
+      "some_ai": 0.0171,
+      "fully_autonomous": 0.0104,
+      "any_label": 0.0295
+    },
+    {
+      "tag": "in",
+      "posts": 6536,
+      "not_disclosed": 1.0,
+      "no_ai": 0.0,
+      "some_ai": 0.0,
+      "fully_autonomous": 0.0,
+      "any_label": 0.0
+    },
+    {
+      "tag": "for",
+      "posts": 6511,
+      "not_disclosed": 1.0,
+      "no_ai": 0.0,
+      "some_ai": 0.0,
+      "fully_autonomous": 0.0,
+      "any_label": 0.0
+    },
+    {
+      "tag": "llm",
+      "posts": 6362,
+      "not_disclosed": 0.9257,
+      "no_ai": 0.0055,
+      "some_ai": 0.0541,
+      "fully_autonomous": 0.0148,
+      "any_label": 0.0743
+    },
+    {
+      "tag": "agents",
+      "posts": 6360,
+      "not_disclosed": 0.9197,
+      "no_ai": 0.0071,
+      "some_ai": 0.0555,
+      "fully_autonomous": 0.0178,
+      "any_label": 0.0803
+    },
+    {
+      "tag": "testing",
+      "posts": 6093,
+      "not_disclosed": 0.9048,
+      "no_ai": 0.0054,
+      "some_ai": 0.0563,
+      "fully_autonomous": 0.0335,
+      "any_label": 0.0952
+    },
+    {
+      "tag": "crypto",
+      "posts": 5391,
+      "not_disclosed": 0.9937,
+      "no_ai": 0.0011,
+      "some_ai": 0.0013,
+      "fully_autonomous": 0.0039,
+      "any_label": 0.0063
+    },
+    {
+      "tag": "machinelearning",
+      "posts": 5262,
+      "not_disclosed": 0.9177,
+      "no_ai": 0.0046,
+      "some_ai": 0.062,
+      "fully_autonomous": 0.0158,
+      "any_label": 0.0823
+    },
+    {
+      "tag": "sale",
+      "posts": 4918,
+      "not_disclosed": 1.0,
+      "no_ai": 0.0,
+      "some_ai": 0.0,
+      "fully_autonomous": 0.0,
+      "any_label": 0.0
+    },
+    {
+      "tag": "career",
+      "posts": 4811,
+      "not_disclosed": 0.9514,
+      "no_ai": 0.0067,
+      "some_ai": 0.031,
+      "fully_autonomous": 0.011,
+      "any_label": 0.0486
+    },
+    {
+      "tag": "devchallenge",
+      "posts": 4504,
+      "not_disclosed": 0.8068,
+      "no_ai": 0.0087,
+      "some_ai": 0.1441,
+      "fully_autonomous": 0.0404,
+      "any_label": 0.1932
+    },
+    {
+      "tag": "node",
+      "posts": 4086,
+      "not_disclosed": 0.9677,
+      "no_ai": 0.0029,
+      "some_ai": 0.0191,
+      "fully_autonomous": 0.0103,
+      "any_label": 0.0323
+    },
+    {
+      "tag": "cybersecurity",
+      "posts": 4021,
+      "not_disclosed": 0.9709,
+      "no_ai": 0.0037,
+      "some_ai": 0.0234,
+      "fully_autonomous": 0.002,
+      "any_label": 0.0291
+    },
+    {
+      "tag": "showdev",
+      "posts": 4007,
+      "not_disclosed": 0.8443,
+      "no_ai": 0.0082,
+      "some_ai": 0.0878,
+      "fully_autonomous": 0.0596,
+      "any_label": 0.1557
+    },
+    {
+      "tag": "technology",
+      "posts": 4002,
+      "not_disclosed": 0.9933,
+      "no_ai": 0.0,
+      "some_ai": 0.0067,
+      "fully_autonomous": 0.0,
+      "any_label": 0.0067
+    },
+    {
+      "tag": "hf26challenge",
+      "posts": 3766,
+      "not_disclosed": 0.82,
+      "no_ai": 0.008,
+      "some_ai": 0.1397,
+      "fully_autonomous": 0.0324,
+      "any_label": 0.18
+    }
+  ],
+  "most_labelled_tags": [
+    {
+      "tag": "brussels",
+      "posts": 1912,
+      "not_disclosed": 0.0,
+      "no_ai": 0.0,
+      "some_ai": 1.0,
+      "fully_autonomous": 0.0,
+      "any_label": 1.0
+    },
+    {
+      "tag": "massage",
+      "posts": 1989,
+      "not_disclosed": 0.0372,
+      "no_ai": 0.0,
+      "some_ai": 0.9628,
+      "fully_autonomous": 0.0,
+      "any_label": 0.9628
+    },
+    {
+      "tag": "training",
+      "posts": 3197,
+      "not_disclosed": 0.4016,
+      "no_ai": 0.0,
+      "some_ai": 0.5984,
+      "fully_autonomous": 0.0,
+      "any_label": 0.5984
+    },
+    {
+      "tag": "devchallenge",
+      "posts": 4504,
+      "not_disclosed": 0.8068,
+      "no_ai": 0.0087,
+      "some_ai": 0.1441,
+      "fully_autonomous": 0.0404,
+      "any_label": 0.1932
+    },
+    {
+      "tag": "hf26challenge",
+      "posts": 3766,
+      "not_disclosed": 0.82,
+      "no_ai": 0.008,
+      "some_ai": 0.1397,
+      "fully_autonomous": 0.0324,
+      "any_label": 0.18
+    },
+    {
+      "tag": "weekendchallenge",
+      "posts": 1590,
+      "not_disclosed": 0.8201,
+      "no_ai": 0.0082,
+      "some_ai": 0.144,
+      "fully_autonomous": 0.0277,
+      "any_label": 0.1799
+    },
+    {
+      "tag": "showdev",
+      "posts": 4007,
+      "not_disclosed": 0.8443,
+      "no_ai": 0.0082,
+      "some_ai": 0.0878,
+      "fully_autonomous": 0.0596,
+      "any_label": 0.1557
+    },
+    {
+      "tag": "webscraping",
+      "posts": 1492,
+      "not_disclosed": 0.8485,
+      "no_ai": 0.0013,
+      "some_ai": 0.0241,
+      "fully_autonomous": 0.126,
+      "any_label": 0.1515
+    },
+    {
+      "tag": "gamedev",
+      "posts": 1386,
+      "not_disclosed": 0.868,
+      "no_ai": 0.0043,
+      "some_ai": 0.0664,
+      "fully_autonomous": 0.0613,
+      "any_label": 0.132
+    },
+    {
+      "tag": "claude",
+      "posts": 1429,
+      "not_disclosed": 0.8775,
+      "no_ai": 0.0042,
+      "some_ai": 0.0882,
+      "fully_autonomous": 0.0301,
+      "any_label": 0.1225
+    },
+    {
+      "tag": "networking",
+      "posts": 1163,
+      "not_disclosed": 0.8839,
+      "no_ai": 0.0129,
+      "some_ai": 0.0636,
+      "fully_autonomous": 0.0396,
+      "any_label": 0.1161
+    },
+    {
+      "tag": "hardware",
+      "posts": 1045,
+      "not_disclosed": 0.8871,
+      "no_ai": 0.0038,
+      "some_ai": 0.0278,
+      "fully_autonomous": 0.0813,
+      "any_label": 0.1129
+    },
+    {
+      "tag": "discuss",
+      "posts": 3085,
+      "not_disclosed": 0.8904,
+      "no_ai": 0.0146,
+      "some_ai": 0.0629,
+      "fully_autonomous": 0.0321,
+      "any_label": 0.1096
+    },
+    {
+      "tag": "database",
+      "posts": 2443,
+      "not_disclosed": 0.896,
+      "no_ai": 0.0094,
+      "some_ai": 0.0598,
+      "fully_autonomous": 0.0348,
+      "any_label": 0.104
+    },
+    {
+      "tag": "mcp",
+      "posts": 2580,
+      "not_disclosed": 0.8961,
+      "no_ai": 0.0105,
+      "some_ai": 0.0558,
+      "fully_autonomous": 0.0376,
+      "any_label": 0.1039
+    }
+  ]
+}
