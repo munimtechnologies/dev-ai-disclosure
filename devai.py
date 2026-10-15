@@ -13,10 +13,12 @@ can be counted, not sampled.
             --since and writes one row per post: id, time, tier, language,
             reading time, reactions, comments, tags, cover image, organisation,
             cross-post. Author ids are held in memory only, to count distinct
-            authors per tier; usernames and ids are never written.
+            authors per tier and per week; usernames and ids are never written.
   analyse   tier shares per day and week, tiers by tag, reactions and comments
             by tier compared within the same publishing day, post traits by
-            tier, author concentration; writes REPORT.md and CSV/JSON tables.
+            tier, author concentration, and machine-paced bursts (one exact tag
+            set and one tier posted minutes apart) with every headline number
+            recomputed without them; writes REPORT.md and CSV/JSON tables.
 
 Uses only DEV's public API (no key). Made by MV2 of Munim, Inc., with AI agents
 working in his name.
@@ -37,8 +39,9 @@ import urllib.request
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 
+VERSION = "0.2.0"
 API = "https://dev.to/api"
-UA = "mv2-dev-ai-disclosure-study/0.1 (MV2 of Munim, Inc.; munimversion2@gmail.com)"
+UA = f"mv2-dev-ai-disclosure-study/{VERSION} (MV2 of Munim, Inc.; munimversion2@gmail.com)"
 PAUSE = 1.0
 # Day of DEV's announcement; replaced by the announcement's exact time when readable.
 LAUNCH = "2026-08-26T00:00:00Z"
@@ -48,6 +51,10 @@ LABELLED = LEVELS[1:]
 NAMES = {"not_disclosed": "Not disclosed", "no_ai": "Hand Written (no AI)",
          "some_ai": "AI-Assisted", "fully_autonomous": "Fully Autonomous"}
 MIN_AGE_DAYS = 7
+# A burst: at least this many posts since launch with one exact non-empty tag set and one
+# tier, with a median gap between consecutive posts of at most this many minutes.
+BURST_MIN_POSTS = 100
+BURST_MAX_GAP_MINUTES = 15.0
 POST_COLS = ["article_id", "published_at", "date", "level", "language", "reading_time",
              "reactions", "comments", "n_tags", "tags", "has_cover", "is_org",
              "crossposted", "edited_after_launch"]
@@ -160,6 +167,22 @@ def author_summary(authors):
     return out
 
 
+def weekly_author_summary(weekly):
+    """Counts only: weekly is {week: {author: set of levels used that week}}.
+
+    Each author counts once per week however much they post, so a single prolific
+    account cannot move these shares the way it moves post shares."""
+    out = []
+    for w in sorted(weekly):
+        used = list(weekly[w].values())
+        row = {"week": w, "authors": len(used)}
+        for lvl in LABELLED:
+            row[lvl] = sum(1 for s in used if lvl in s)
+        row["any_label"] = sum(1 for s in used if s & set(LABELLED))
+        out.append(row)
+    return out
+
+
 def collect(args):
     os.makedirs(args.out_dir, exist_ok=True)
     t0 = time.time()
@@ -175,6 +198,7 @@ def collect(args):
     log(f"launch: {launch.isoformat()} ({launch_source})")
     seen = set()
     authors = defaultdict(Counter)
+    weekly_authors = defaultdict(dict)
     pages = written = old_pages = failures = 0
     oldest = newest = None
     stopped = "max pages"
@@ -214,6 +238,7 @@ def collect(args):
                 uid = (a.get("user") or {}).get("user_id")
                 if uid is not None and pub >= launch:
                     authors[uid][row["level"]] += 1
+                    weekly_authors[week_start(row["date"], launch)].setdefault(uid, set()).add(row["level"])
             if dated and all(parse_time(a["published_at"]) < since for a in dated):
                 old_pages += 1
                 if old_pages >= 2:
@@ -226,9 +251,11 @@ def collect(args):
     with open(os.path.join(args.out_dir, "posts.csv"), "rb") as src, \
             gzip.open(os.path.join(args.out_dir, "posts.csv.gz"), "wb") as dst:
         shutil.copyfileobj(src, dst)
+    summary = author_summary(authors)
+    summary["weekly"] = weekly_author_summary(weekly_authors)
     with open(os.path.join(args.out_dir, "authors.json"), "w", encoding="utf-8") as f:
-        json.dump(author_summary(authors), f, indent=2)
-    meta = {"snapshot_at": started, "finished_at": now_iso(), "since": args.since,
+        json.dump(summary, f, indent=2)
+    meta = {"version": VERSION, "snapshot_at": started, "finished_at": now_iso(), "since": args.since,
             "launch": launch.isoformat(), "launch_source": launch_source,
             "pages": pages, "per_page": args.per_page, "posts": written,
             "oldest": oldest.isoformat() if oldest else None,
@@ -278,6 +305,16 @@ def shares(counter):
     return out
 
 
+def weekly_shares(daily, launch):
+    weekly = defaultdict(Counter)
+    week_days = defaultdict(set)
+    for d, c in daily.items():
+        w = week_start(d, launch)
+        weekly[w].update(c)
+        week_days[w].add(d)
+    return [dict(week=w, days=len(week_days[w]), **shares(weekly[w])) for w in sorted(weekly)]
+
+
 def engagement(eng, cutoff_ts, en_only=False):
     """Reactions and comments by tier, each post ranked against its own publishing day."""
     days = defaultdict(list)
@@ -308,6 +345,37 @@ def engagement(eng, cutoff_ts, en_only=False):
     return out
 
 
+def find_bursts(path, launch, min_posts=BURST_MIN_POSTS, max_gap_minutes=BURST_MAX_GAP_MINUTES):
+    """Machine-paced groups among posts since launch: one exact non-empty tag set and one
+    tier, at least min_posts posts, median gap between consecutive posts at most
+    max_gap_minutes. Returns (groups, set of (tags, level) keys)."""
+    times = defaultdict(list)
+    reacts = Counter()
+    with open(path, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if not r["tags"]:
+                continue
+            pub = parse_time(r["published_at"])
+            if pub < launch:
+                continue
+            key = (r["tags"], r["level"])
+            times[key].append(pub.timestamp())
+            reacts[key] += int(r["reactions"])
+    groups = []
+    for key, ts in times.items():
+        if len(ts) < max(min_posts, 2):
+            continue
+        ts.sort()
+        gap = median([b - a for a, b in zip(ts, ts[1:])]) / 60
+        if gap <= max_gap_minutes:
+            groups.append({"tags": key[0], "level": key[1], "posts": len(ts),
+                           "first": datetime.fromtimestamp(ts[0], timezone.utc).isoformat(timespec="seconds"),
+                           "last": datetime.fromtimestamp(ts[-1], timezone.utc).isoformat(timespec="seconds"),
+                           "median_gap_minutes": round(gap, 2), "reactions": reacts[key]})
+    groups.sort(key=lambda g: -g["posts"])
+    return groups, {(g["tags"], g["level"]) for g in groups}
+
+
 def analyse(args):
     os.makedirs(args.out_dir, exist_ok=True)
     meta = {}
@@ -315,18 +383,24 @@ def analyse(args):
         with open(args.meta, encoding="utf-8") as f:
             meta = json.load(f)
     launch = parse_time(meta.get("launch") or LAUNCH)
-    daily = defaultdict(Counter)
+    min_posts = getattr(args, "burst_min_posts", BURST_MIN_POSTS)
+    max_gap = getattr(args, "burst_max_gap_minutes", BURST_MAX_GAP_MINUTES)
+    bursts, burst_keys = find_bursts(args.posts, launch, min_posts, max_gap)
+    daily, daily_x = defaultdict(Counter), defaultdict(Counter)
     tags = defaultdict(Counter)
-    overall, pre, challenge = Counter(), Counter(), Counter()
+    overall, overall_x, pre, challenge = Counter(), Counter(), Counter(), Counter()
     pre_labelled_edited = 0
     traits = {}
-    eng = []
+    eng, eng_x = [], []
     latest = None
     with open(args.posts, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             pub = parse_time(r["published_at"])
             lvl = r["level"]
+            in_burst = pub >= launch and (r["tags"], lvl) in burst_keys
             daily[r["date"]][lvl] += 1
+            if not in_burst:
+                daily_x[r["date"]][lvl] += 1
             latest = pub if latest is None else max(latest, pub)
             if pub < launch:
                 pre[lvl] += 1
@@ -334,6 +408,8 @@ def analyse(args):
                     pre_labelled_edited += 1
                 continue
             overall[lvl] += 1
+            if not in_burst:
+                overall_x[lvl] += 1
             post_tags = r["tags"].split()
             for t in post_tags:
                 tags[t][lvl] += 1
@@ -349,26 +425,28 @@ def analyse(args):
             t["org"] += int(r["is_org"])
             t["cross"] += int(r["crossposted"])
             t["no_tags"] += int(r["n_tags"] == "0")
-            eng.append((r["date"], pub.timestamp(), int(r["reactions"]), int(r["comments"]), lvl, en))
+            e = (r["date"], pub.timestamp(), int(r["reactions"]), int(r["comments"]), lvl, en)
+            eng.append(e)
+            if not in_burst:
+                eng_x.append(e)
     snap = parse_time(meta["snapshot_at"]) if meta.get("snapshot_at") else latest
     cutoff = (snap - timedelta(days=MIN_AGE_DAYS)) if snap else launch
 
     with open(os.path.join(args.out_dir, "daily.csv"), "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f)
-        wr.writerow(["date", "posts"] + LEVELS + ["other", "share_any_label"])
+        wr.writerow(["date", "posts"] + LEVELS + ["other", "share_any_label", "burst_posts"])
         for d in sorted(daily):
             c = daily[d]
             n = sum(c.values())
             other = n - sum(c[lvl] for lvl in LEVELS)
             wr.writerow([d, n] + [c[lvl] for lvl in LEVELS] + [other,
-                        round(sum(c[lvl] for lvl in LABELLED) / n, 4) if n else ""])
-    weekly = defaultdict(Counter)
-    week_days = defaultdict(set)
-    for d, c in daily.items():
-        w = week_start(d, launch)
-        weekly[w].update(c)
-        week_days[w].add(d)
-    weeks = [dict(week=w, days=len(week_days[w]), **shares(weekly[w])) for w in sorted(weekly)]
+                        round(sum(c[lvl] for lvl in LABELLED) / n, 4) if n else "",
+                        n - sum(daily_x[d].values())])
+    with open(os.path.join(args.out_dir, "bursts.csv"), "w", newline="", encoding="utf-8") as f:
+        wr = csv.DictWriter(f, fieldnames=["tags", "level", "posts", "first", "last", "median_gap_minutes",
+                                           "reactions"])
+        wr.writeheader()
+        wr.writerows(bursts)
 
     tag_rows = []
     for t, c in tags.items():
@@ -394,14 +472,19 @@ def analyse(args):
         with open(args.authors, encoding="utf-8") as f:
             authors = json.load(f)
     summary = {
-        "meta": meta, "launch": launch.isoformat(),
+        "meta": meta, "version": VERSION, "launch": launch.isoformat(),
         "engagement_cutoff": cutoff.isoformat(),
         "before_launch": dict(shares(pre), labelled_and_edited_after_launch=pre_labelled_edited,
                               labelled=sum(pre[lvl] for lvl in LABELLED)),
         "since_launch": dict(shares(overall), counts={k: overall[k] for k in sorted(overall)}),
-        "weekly": weeks,
+        "weekly": weekly_shares(daily, launch),
+        "burst_rule": {"min_posts": min_posts, "max_median_gap_minutes": max_gap},
+        "bursts": bursts,
+        "since_launch_excluding_bursts": dict(shares(overall_x), counts={k: overall_x[k] for k in sorted(overall_x)}),
+        "weekly_excluding_bursts": weekly_shares(daily_x, launch),
         "engagement_all": engagement(eng, cutoff.timestamp()),
         "engagement_english": engagement(eng, cutoff.timestamp(), en_only=True),
+        "engagement_all_excluding_bursts": engagement(eng_x, cutoff.timestamp()),
         "traits": trait_out,
         "hf26challenge": shares(challenge),
         "authors": authors,
@@ -413,12 +496,25 @@ def analyse(args):
         json.dump(summary, f, indent=2)
     with open(os.path.join(args.out_dir, "REPORT.md"), "w", encoding="utf-8") as f:
         f.write(report(summary))
-    log(json.dumps({k: summary[k] for k in ("before_launch", "since_launch")}))
+    log(json.dumps({k: summary[k] for k in ("before_launch", "since_launch", "since_launch_excluding_bursts")}))
+    log(f"bursts: {len(bursts)} groups, {sum(g['posts'] for g in bursts)} posts")
     return 0
 
 
 def pc(x):
     return "" if x is None else f"{100 * x:.1f}%"
+
+
+def engagement_table(e):
+    out = ["| Label | Posts | Mean day percentile | z | Mean reactions | Median | No reactions | Mean comments | No comments |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    for lvl in LEVELS:
+        if lvl in e:
+            r = e[lvl]
+            out.append(f"| {NAMES[lvl]} | {r['posts']} | {r['mean_day_percentile']:.2f} | {r['z']:+.1f} | "
+                       f"{r['mean_reactions']} | {r['median_reactions']} | {pc(r['share_zero_reactions'])} | "
+                       f"{r['mean_comments']} | {pc(r['share_zero_comments'])} |")
+    return out
 
 
 def report(s):
@@ -428,6 +524,7 @@ def report(s):
            "Every public post in DEV's /articles/latest listing"
            + (f" from {m.get('since')} to the snapshot at {m.get('snapshot_at')}" if m else "")
            + f". DEV announced the labels at {s['launch']}. "
+           f"devai.py {s.get('version', '')}. "
            "Made by MV2 of Munim, Inc., with AI agents working in his name; code Apache-2.0, data CC BY 4.0.", ""]
     if m:
         out += [f"Coverage: {m.get('posts')} posts over {m.get('pages')} listing pages "
@@ -450,21 +547,55 @@ def report(s):
     for w in s["weekly"]:
         out.append(f"| {w['week']} | {w['days']} | {w['posts']} | {pc(w['no_ai'])} | {pc(w['some_ai'])} | "
                    f"{pc(w['fully_autonomous'])} | {pc(w['any_label'])} |")
-    for title, key in (("all posts", "engagement_all"), ("English posts only", "engagement_english")):
-        e = s[key]
+    rule = s.get("burst_rule") or {}
+    bursts = s.get("bursts") or []
+    if "since_launch_excluding_bursts" in s:
+        x = s["since_launch_excluding_bursts"]
+        out += ["", "## Bursts: one tag set, one label, machine pace", "",
+                f"A burst is a group of at least {rule.get('min_posts')} posts since launch that share one exact, "
+                f"non-empty tag set and one label, with a median gap of at most {rule.get('max_median_gap_minutes')} "
+                "minutes between consecutive posts. Rule set after the first snapshot showed one such group; "
+                "every group it finds is listed, so a reader can judge what was left out.", ""]
+        if bursts:
+            out += [f"{len(bursts)} groups, {sum(g['posts'] for g in bursts)} posts.", "",
+                    "| Tags | Label | Posts | First | Last | Median gap (min) | Reactions |", "|---|---|---|---|---|---|---|"]
+            for g in bursts[:25]:
+                out.append(f"| {g['tags']} | {NAMES.get(g['level'], g['level'])} | {g['posts']} | {g['first']} | "
+                           f"{g['last']} | {g['median_gap_minutes']} | {g['reactions']} |")
+        else:
+            out.append("No group meets the rule.")
+        out += ["", f"Since launch without bursts: {x['posts']} posts.", "",
+                "| Label | Posts | Share |", "|---|---|---|"]
+        for lvl in LEVELS:
+            out.append(f"| {NAMES[lvl]} | {x['counts'].get(lvl, 0)} | {pc(x[lvl])} |")
+        out += [f"| **Any label** | | **{pc(x['any_label'])}** |", "",
+                "Week by week without bursts:", "",
+                "| Week from | Days | Posts | Hand Written | AI-Assisted | Fully Autonomous | Any label |",
+                "|---|---|---|---|---|---|---|"]
+        for w in s["weekly_excluding_bursts"]:
+            out.append(f"| {w['week']} | {w['days']} | {w['posts']} | {pc(w['no_ai'])} | {pc(w['some_ai'])} | "
+                       f"{pc(w['fully_autonomous'])} | {pc(w['any_label'])} |")
+    a = s.get("authors") or {}
+    if a.get("weekly"):
+        out += ["", "## Authors week by week", "",
+                "Share of the week's active authors (since launch) who used each label at least once that week. "
+                "Each author counts once per week, so one prolific account cannot move these shares.", "",
+                "| Week from | Authors | Hand Written | AI-Assisted | Fully Autonomous | Any label |",
+                "|---|---|---|---|---|---|"]
+        for w in a["weekly"]:
+            n = w["authors"]
+            out.append(f"| {w['week']} | {n} | " + " | ".join(
+                pc(w[k] / n if n else None) for k in ("no_ai", "some_ai", "fully_autonomous", "any_label")) + " |")
+    for title, key in (("all posts", "engagement_all"), ("English posts only", "engagement_english"),
+                       ("all posts, bursts left out", "engagement_all_excluding_bursts")):
+        if key not in s:
+            continue
         out += ["", f"## Reactions and comments by label ({title})", "",
                 f"Posts published after the announcement and at least {MIN_AGE_DAYS} days before the snapshot "
                 f"(cutoff {s['engagement_cutoff']}). Each post's reactions are ranked against every other post "
                 "published the same UTC day: 0.50 is typical for that day. z compares the mean with 0.50; "
-                "this is a correlation, not an effect of the label.", "",
-                "| Label | Posts | Mean day percentile | z | Mean reactions | Median | No reactions | Mean comments | No comments |",
-                "|---|---|---|---|---|---|---|---|---|"]
-        for lvl in LEVELS:
-            if lvl in e:
-                r = e[lvl]
-                out.append(f"| {NAMES[lvl]} | {r['posts']} | {r['mean_day_percentile']:.2f} | {r['z']:+.1f} | "
-                           f"{r['mean_reactions']} | {r['median_reactions']} | {pc(r['share_zero_reactions'])} | "
-                           f"{r['mean_comments']} | {pc(r['share_zero_comments'])} |")
+                "this is a correlation, not an effect of the label.", ""]
+        out += engagement_table(s[key])
     out += ["", "## What labelled posts look like", "",
             "| Label | Posts | Median reading minutes | English | Cover image | Organisation | Cross-posted | No tags |",
             "|---|---|---|---|---|---|---|---|"]
@@ -474,7 +605,6 @@ def report(s):
             out.append(f"| {NAMES[lvl]} | {t['posts']} | {t['median_reading_minutes']} | {pc(t['share_english'])} | "
                        f"{pc(t['share_cover_image'])} | {pc(t['share_organisation'])} | "
                        f"{pc(t['share_crossposted'])} | {pc(t['share_no_tags'])} |")
-    a = s.get("authors") or {}
     if a.get("by_level"):
         out += ["", "## Authors", "",
                 f"{a['authors']} distinct authors posted after the announcement; {a['authors_with_any_label']} used "
@@ -514,6 +644,7 @@ def report(s):
             f"{MIN_AGE_DAYS} days are left out of that comparison, and the day percentile removes the effect of age.",
             "- Labels go with other differences (topic, language, author habits, spam), so differences in "
             "reactions are correlations, not effects of the label.",
+            "- The burst rule catches only exact repeats of one tag set; a campaign that varies its tags is missed.",
             "- Posts deleted or unpublished before the snapshot are missing.", ""]
     return "\n".join(out)
 
@@ -535,6 +666,8 @@ def main(argv=None):
     a.add_argument("--authors", default="")
     a.add_argument("--min-tag-posts", type=int, default=100)
     a.add_argument("--min-rank-tag-posts", type=int, default=1000)
+    a.add_argument("--burst-min-posts", type=int, default=BURST_MIN_POSTS)
+    a.add_argument("--burst-max-gap-minutes", type=float, default=BURST_MAX_GAP_MINUTES)
     a.add_argument("--out-dir", default="out")
     a.set_defaults(func=analyse)
     args = ap.parse_args(argv)
