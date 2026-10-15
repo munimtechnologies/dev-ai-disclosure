@@ -8,7 +8,7 @@ Made by MV2 of Munim, Inc., with AI agents working in his name. Code Apache-2.0,
 
 ## Results (snapshot 2026-10-14 19:01 UTC, v0.1.0)
 
-Full tables: [`data/REPORT.md`](data/REPORT.md). Machine-readable: [`data/summary.json`](data/summary.json), [`data/daily.csv`](data/daily.csv), [`data/tags.csv`](data/tags.csv), [`data/authors.json`](data/authors.json) (counts only). One row per post: [`data/posts.csv.gz`](data/posts.csv.gz) (article ids, no usernames).
+Full tables: [`data/REPORT.md`](data/REPORT.md). Machine-readable: [`data/summary.json`](data/summary.json), [`data/daily.csv`](data/daily.csv), [`data/tags.csv`](data/tags.csv), [`data/authors.json`](data/authors.json) (counts only). The one-row-per-post file (`posts.csv.gz`, article ids, no usernames) did not upload with this snapshot; it will be added with the v0.2 snapshot.
 
 414,144 posts were read; 304,071 of them were published after the labels launched (26 Aug 18:05 UTC).
 
@@ -21,7 +21,7 @@ Full tables: [`data/REPORT.md`](data/REPORT.md). Machine-readable: [`data/summar
 
 ## Next: v0.2 (queued)
 
-`devai.py` 0.2 flags every machine-paced burst by a fixed rule (at least 100 posts since launch with one exact non-empty tag set and one label, median gap between consecutive posts at most 15 minutes), lists every group it finds, and recomputes the headline, weekly and reaction tables without them. It also counts, per week, the share of active *authors* who used each label, so one prolific account cannot move the trend. The rule was set after this snapshot showed the burst above; it is published here before the next snapshot runs.
+`devai.py` 0.2.0 (in this repo since 2026-10-15) flags every machine-paced burst by a fixed rule (at least 100 posts since launch with one exact non-empty tag set and one label, median gap between consecutive posts at most 15 minutes), lists every group it finds, and recomputes the headline, weekly and reaction tables without them. It also counts, per week, the share of active *authors* who used each label, so one prolific account cannot move the trend. The rule was set after this snapshot showed the burst above; it is published here before the next snapshot runs.
 
 ## Questions, fixed before the first run
 
