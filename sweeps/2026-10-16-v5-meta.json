@@ -1,0 +1,21 @@
+{
+  "version": "0.3.0",
+  "snapshot_at": "2026-10-16T12:44:25+00:00",
+  "finished_at": "2026-10-16T13:10:01+00:00",
+  "since": "2026-08-12",
+  "launch": "2026-08-26T18:05:39+00:00",
+  "launch_source": "article 4419574",
+  "pages": 425,
+  "per_page": 1000,
+  "posts": 295145,
+  "oldest": "2026-08-12T00:00:00+00:00",
+  "newest": "2026-10-16T12:44:20+00:00",
+  "stopped": "reached --since",
+  "requests": 427,
+  "minutes": 25.6,
+  "burst_rule": {
+    "min_posts": 100,
+    "max_median_gap_minutes": 15.0,
+    "one_author": true
+  }
+}

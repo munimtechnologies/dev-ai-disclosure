@@ -1,0 +1,18 @@
+launch: 2026-08-26T18:05:39+00:00 (article 4419574)
+  page 25: 24898 posts, oldest 2026-10-09 07:34:31+00:00, 1.8 min
+  page 50: 49891 posts, oldest 2026-10-03 09:01:19+00:00, 3.7 min
+  page 75: 74877 posts, oldest 2026-09-28 08:26:44+00:00, 6.3 min
+  page 100: 99869 posts, oldest 2026-09-24 12:36:56+00:00, 9.1 min
+  page 125: 124864 posts, oldest 2026-09-21 10:42:33+00:00, 11.4 min
+  page 150: 149853 posts, oldest 2026-09-17 17:00:04+00:00, 13.5 min
+  page 175: 174847 posts, oldest 2026-09-14 13:05:56+00:00, 15.9 min
+  page 200: 199837 posts, oldest 2026-09-10 09:30:00+00:00, 19.1 min
+  page 225: 224834 posts, oldest 2026-09-07 08:44:27+00:00, 21.4 min
+  page 250: 249831 posts, oldest 2026-09-03 06:12:42+00:00, 24.0 min
+  page 275: 274821 posts, oldest 2026-08-31 02:15:36+00:00, 26.9 min
+  page 300: 299816 posts, oldest 2026-08-27 07:36:53+00:00, 29.6 min
+  page 325: 324810 posts, oldest 2026-08-24 08:14:57+00:00, 32.3 min
+  page 350: 349809 posts, oldest 2026-08-20 13:39:52+00:00, 35.2 min
+  page 375: 374805 posts, oldest 2026-08-17 10:16:30+00:00, 38.4 min
+  page 400: 399802 posts, oldest 2026-08-13 14:35:20+00:00, 41.4 min
+{"snapshot_at": "2026-10-14T19:01:29+00:00", "finished_at": "2026-10-14T19:45:02+00:00", "since": "2026-08-12", "launch": "2026-08-26T18:05:39+00:00", "launch_source": "article 4419574", "pages": 417, "per_page": 1000, "posts": 414144, "oldest": "2026-08-12T00:00:00+00:00", "newest": "2026-10-14T19:01:31+00:00", "stopped": "reached --since", "requests": 418, "minutes": 43.5}

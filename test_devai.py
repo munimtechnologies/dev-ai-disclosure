@@ -7,14 +7,21 @@ import json
 import os
 import tempfile
 import unittest
+import urllib.parse
 from argparse import Namespace
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import timedelta
 from unittest import mock
 
 import devai
 
 LAUNCH = devai.parse_time("2026-08-26T15:00:00Z")
+# A few names from Forem's Fastly allowlist (config/fastly/snippets/safe_params_list.vcl);
+# any other query parameter is removed before the cache lookup.
+ALLOWLIST_SAMPLE = {"page", "per_page", "item", "ut", "i", "token", "p_id"}
+# Every parameter ArticleApiIndexService reads.
+READ_BY_INDEX = {"page", "tag", "tags", "tags_exclude", "username", "state", "sort", "top", "collection_id",
+                 "per_page"}
 
 
 def article(aid, published, level="some_ai", uid=7, **extra):
@@ -56,6 +63,58 @@ class RowTests(unittest.TestCase):
         self.assertEqual(r["edited_after_launch"], 1)
         self.assertEqual(r["n_tags"], 3)
         self.assertEqual(r["has_cover"], 0)
+
+
+class SweepCheckTests(unittest.TestCase):
+    def test_bust_param_survives_the_allowlist_and_is_not_read(self):
+        self.assertIn(devai.BUST_PARAM, ALLOWLIST_SAMPLE)
+        self.assertNotIn(devai.BUST_PARAM, READ_BY_INDEX)
+        self.assertNotIn("sweep", ALLOWLIST_SAMPLE)
+
+    def test_listing_path(self):
+        self.assertEqual(devai.listing_path(1000, 3), "/articles/latest?per_page=1000&page=3")
+        p = devai.listing_path(1000, 3, "20261016T1300")
+        self.assertEqual(p, "/articles/latest?per_page=1000&page=3&item=20261016T1300")
+        q = urllib.parse.parse_qs(urllib.parse.urlparse(p).query)
+        self.assertEqual(q["page"], ["3"])
+        self.assertEqual(q["item"], ["20261016T1300"])
+        self.assertNotIn("sweep", q)
+        self.assertEqual(devai.listing_path(1000, 3, "x", "ut"), "/articles/latest?per_page=1000&page=3&ut=x")
+
+    def test_page_edges_and_hole(self):
+        a = [article(1, "2026-10-01T10:00:00Z"), article(2, "2026-10-01T09:00:00Z"), {"id": 3}]
+        oldest, newest = devai.page_edges(a)
+        self.assertEqual(oldest, devai.parse_time("2026-10-01T09:00:00Z"))
+        self.assertEqual(newest, devai.parse_time("2026-10-01T10:00:00Z"))
+        self.assertEqual(devai.page_edges([]), (None, None))
+        # Next page starts an hour after the previous one ended: a one-hour hole.
+        self.assertEqual(devai.page_hole_seconds(oldest, devai.parse_time("2026-10-01T08:00:00Z")), 3600)
+        # Next page starts before the previous one ended: overlap, negative.
+        self.assertEqual(devai.page_hole_seconds(oldest, devai.parse_time("2026-10-01T09:30:00Z")), -1800)
+        self.assertIsNone(devai.page_hole_seconds(None, newest))
+
+    def test_cached_page(self):
+        self.assertFalse(devai.cached_page({}))
+        self.assertFalse(devai.cached_page({"Age": "0", "X-Cache": "MISS"}))
+        self.assertFalse(devai.cached_page({"Age": "0", "X-Cache": "MISS, MISS"}))
+        self.assertTrue(devai.cached_page({"Age": "4311"}))
+        self.assertTrue(devai.cached_page({"X-Cache": "HIT, MISS"}))
+        self.assertTrue(devai.cached_page({"X-Cache": "MISS, HIT"}))
+        self.assertFalse(devai.cached_page({"Age": "junk"}))
+
+    def test_coverage_line(self):
+        m = {"cache_bust": True, "bust_param": "item",
+             "coverage": {"pages": 400, "cached_pages": 0, "duplicate_ids": 12,
+                          "max_hole_minutes": 0.3, "pages_with_hole_over_10min": 0}}
+        line = devai.coverage_line(m)
+        self.assertIn("per-sweep value in `item`", line)
+        self.assertIn("allowlist", line)
+        self.assertIn("0 of 400 pages", line)
+        self.assertIn("12 ids were listed twice", line)
+        self.assertIn("per-sweep value in `item`", devai.coverage_line({"cache_bust": True, "coverage": {"pages": 1}}))
+        self.assertEqual(devai.coverage_line({}), "")
+        self.assertEqual(devai.coverage_line({"cache_bust": False, "coverage": {}}), "")
+        self.assertIn("could come from a cache", devai.coverage_line({"cache_bust": False, "coverage": {"pages": 9}}))
 
 
 class MathTests(unittest.TestCase):
@@ -159,6 +218,28 @@ def burst_fixture():
     return arts
 
 
+def cross_author_fixture():
+    """burst_fixture plus 160 challenge entries by 160 different authors, 3 minutes apart:
+    one tag set and one label at machine pace, but no author posts more than once."""
+    arts = burst_fixture()
+    t0 = devai.parse_time("2026-10-02T00:00:00Z")
+    for i in range(160):
+        arts.append(article(5000 + i, stamp(t0 + timedelta(minutes=3 * i)), "not_disclosed", 1000 + i,
+                            tag_list=["devchallenge", "hf26challenge"], public_reactions_count=2))
+    return arts
+
+
+def keyed_of(arts):
+    """What collect holds in memory for find_author_bursts."""
+    keyed = defaultdict(list)
+    for a in arts:
+        r = devai.row_of(a, LAUNCH)
+        pub = devai.parse_time(r["published_at"])
+        if r["tags"] and pub >= LAUNCH:
+            keyed[(a["user"]["user_id"], r["tags"], r["level"])].append((pub.timestamp(), r["article_id"]))
+    return keyed
+
+
 class BurstTests(unittest.TestCase):
     def test_find_bursts(self):
         with tempfile.TemporaryDirectory() as out:
@@ -176,6 +257,23 @@ class BurstTests(unittest.TestCase):
             self.assertEqual(keys, {("massage training brussels", "some_ai")})
             groups, _ = devai.find_bursts(path, LAUNCH, 40, 15)
             self.assertEqual(sorted(g["posts"] for g in groups), [50, 150])
+
+    def test_find_author_bursts(self):
+        t0 = LAUNCH.timestamp() + 86400
+        keyed = {
+            (1, "massage training brussels", "some_ai"): [(t0 + 180 * i, 1000 + i) for i in range(120)],
+            # Two authors share a tag set at a combined 5-minute pace, but each has only 80 posts.
+            (2, "devchallenge hf26challenge", "not_disclosed"): [(t0 + 600 * i, 2000 + i) for i in range(80)],
+            (3, "devchallenge hf26challenge", "not_disclosed"): [(t0 + 300 + 600 * i, 3000 + i) for i in range(80)],
+            (4, "python", "no_ai"): [(t0 + 86400 * i, 4000 + i) for i in range(150)],
+            (1, "seo", "not_disclosed"): [(t0 + 60 * i, 5000 + i) for i in range(100)],
+        }
+        groups, n_authors = devai.find_author_bursts(keyed, 100, 15)
+        self.assertEqual([len(g) for g in groups], [120, 100])
+        self.assertEqual(groups[0][0], 1000)
+        self.assertEqual(groups[1][0], 5000)
+        self.assertEqual(n_authors, 1)
+        self.assertEqual(devai.find_author_bursts({}, 100, 15), ([], 0))
 
     def test_analyse_without_bursts(self):
         with tempfile.TemporaryDirectory() as out:
@@ -196,6 +294,8 @@ class BurstTests(unittest.TestCase):
             self.assertEqual(x["counts"]["some_ai"], 150)
             self.assertAlmostEqual(x["some_ai"], 0.625)
             self.assertEqual(len(s["bursts"]), 1)
+            self.assertFalse(s["burst_rule"]["one_author"])
+            self.assertIsNone(s["tagset_rule_comparison"])
             # The pre-launch group is not a burst, so it stays in the before-launch count.
             self.assertEqual(s["before_launch"]["posts"], 120)
             wk = {w["week"]: w for w in s["weekly"]}
@@ -214,6 +314,48 @@ class BurstTests(unittest.TestCase):
             self.assertIn("| massage training brussels | AI-Assisted | 150 |", rep)
             self.assertIn("Since launch without bursts: 240 posts.", rep)
             self.assertIn("bursts left out", rep)
+            # No coverage block in this meta: no sweep-check line.
+            self.assertNotIn("Sweep check:", rep)
+
+    def test_analyse_with_author_bursts(self):
+        with tempfile.TemporaryDirectory() as out:
+            arts = cross_author_fixture()
+            path = os.path.join(out, "posts.csv")
+            write_posts(path, arts)
+            groups, n_authors = devai.find_author_bursts(keyed_of(arts), 100, 15)
+            self.assertEqual(n_authors, 1)
+            bp = os.path.join(out, "burst_posts.csv")
+            devai.write_burst_posts(bp, groups)
+            self.assertEqual(devai.read_burst_posts(bp), {i: 1 for i in range(1, 151)})
+            meta = os.path.join(out, "meta.json")
+            with open(meta, "w", encoding="utf-8") as f:
+                json.dump({"launch": LAUNCH.isoformat(), "snapshot_at": "2026-10-14T00:00:00+00:00"}, f)
+            a = Namespace(posts=path, meta=meta, authors="", burst_posts=bp, min_tag_posts=1,
+                          min_rank_tag_posts=1, burst_min_posts=100, burst_max_gap_minutes=15, out_dir=out)
+            self.assertEqual(devai.analyse(a), 0)
+            with open(os.path.join(out, "summary.json"), encoding="utf-8") as f:
+                s = json.load(f)
+            self.assertEqual(s["since_launch"]["posts"], 550)
+            self.assertTrue(s["burst_rule"]["one_author"])
+            self.assertEqual(len(s["bursts"]), 1)
+            g = s["bursts"][0]
+            self.assertEqual((g["tags"], g["level"], g["posts"]), ("massage training brussels", "some_ai", 150))
+            self.assertAlmostEqual(g["median_gap_minutes"], 5.0)
+            self.assertEqual(g["first"], "2026-09-24T00:00:00+00:00")
+            self.assertEqual(g["reactions"], 0)
+            x = s["since_launch_excluding_bursts"]
+            self.assertEqual(x["posts"], 400)
+            self.assertEqual(x["counts"]["not_disclosed"], 200)
+            c = s["tagset_rule_comparison"]
+            self.assertEqual((c["groups"], c["posts"], c["posts_also_in_author_bursts"]), (2, 310, 150))
+            with open(os.path.join(out, "REPORT.md"), encoding="utf-8") as f:
+                rep = f.read()
+            self.assertIn("## Bursts: one author, one tag set, one label, machine pace", rep)
+            self.assertIn("| massage training brussels | AI-Assisted | 150 |", rep)
+            self.assertNotIn("| devchallenge hf26challenge |", rep)
+            self.assertIn("Since launch without bursts: 400 posts.", rep)
+            self.assertIn("finds 2 groups with 310 posts, of which 150 are in a one-author burst", rep)
+            self.assertIn("spreads over many accounts is missed", rep)
 
 
 class StubClient:
@@ -227,20 +369,40 @@ class StubClient:
         4: [article(15, "2026-07-01T09:00:00Z", "some_ai", 4)],
         5: [article(16, "2026-10-14T09:00:00Z", "some_ai", 4)],
     }
+    headers = {}
+    seen_paths = []
 
     def __init__(self, pause=1.0):
         self.requests = 0
         self.paths = []
+        self.last_headers = {}
+        type(self).seen_paths = self.paths
 
     def get(self, path, tries=6):
         self.requests += 1
         self.paths.append(path)
+        self.last_headers = dict(self.headers)
         if path == devai.LAUNCH_POST:
             return {"id": 1, "published_at": "2026-08-26T15:00:00Z"}
         if path.startswith("/articles/latest"):
-            page = int(path.rsplit("page=", 1)[1])
-            return self.pages.get(page, [])
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(path).query)
+            return self.pages.get(int(q["page"][0]), [])
         return None
+
+
+class CachedStubClient(StubClient):
+    """Every listing page answers with cache headers saying it was served from a cache."""
+    headers = {"Age": "4311", "X-Cache": "HIT"}
+
+
+class BurstStubClient(StubClient):
+    """One author posting 110 Fully Autonomous posts two minutes apart with one tag set."""
+    pages = {
+        1: [article(100 + i, stamp(devai.parse_time("2026-10-01T00:00:00Z") + timedelta(minutes=2 * i)),
+                    "fully_autonomous", 77, tag_list=["seo", "backlinks"]) for i in range(110)],
+        2: [article(1, "2026-08-01T09:00:00Z", "some_ai", 4)],
+        3: [article(2, "2026-07-01T09:00:00Z", "some_ai", 4)],
+    }
 
 
 class PipelineTests(unittest.TestCase):
@@ -250,6 +412,11 @@ class PipelineTests(unittest.TestCase):
                              out_dir=out)
             with mock.patch.object(devai, "Client", StubClient):
                 self.assertEqual(devai.collect(args), 0)
+            listing = [p for p in StubClient.seen_paths if p.startswith("/articles/latest")]
+            self.assertEqual(len(listing), 4)
+            self.assertTrue(all("&item=" in p for p in listing))
+            self.assertTrue(all("sweep" not in p for p in listing))
+            self.assertEqual(len({p.rsplit("&item=", 1)[1] for p in listing}), 1)
             with open(os.path.join(out, "posts.csv"), newline="", encoding="utf-8") as f:
                 rows = list(csv.DictReader(f))
             # 13, 14 and 15 are older than --since; 11 is listed twice; the listing stops after
@@ -264,6 +431,20 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(meta["posts"], 3)
             self.assertEqual(meta["version"], devai.VERSION)
             self.assertTrue(meta["launch"].startswith("2026-08-26T15:00"))
+            self.assertTrue(meta["burst_rule"]["one_author"])
+            self.assertTrue(meta["cache_bust"])
+            self.assertEqual(meta["bust_param"], "item")
+            cov = meta["coverage"]
+            self.assertEqual(cov["pages"], 4)
+            self.assertEqual(cov["cached_pages"], 0)
+            self.assertEqual(cov["duplicate_ids"], 1)
+            self.assertEqual(cov["header_samples"], [{"page": 1, "headers": {}}])
+            # Page 2 overlaps page 1 (no hole); pages 3 and 4 each start days after the previous
+            # page ended, so two holes over 10 minutes; the largest is page 4's 31 days.
+            self.assertEqual(cov["pages_with_hole_over_10min"], 2)
+            self.assertEqual([h["page"] for h in cov["holes"]], [3, 4])
+            self.assertEqual(cov["max_hole_seconds"], 31 * 86400)
+            self.assertEqual(cov["max_hole_minutes"], 31 * 1440.0)
             with open(os.path.join(out, "authors.json"), encoding="utf-8") as f:
                 authors = json.load(f)
             # Author 3's post is from before the launch, so only authors 1 and 2 count.
@@ -271,6 +452,8 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(authors["weekly"], [{"week": "2026-10-14", "authors": 2, "no_ai": 0, "some_ai": 1,
                                                   "fully_autonomous": 0, "any_label": 1}])
             self.assertNotIn('"1"', json.dumps(authors["weekly"]))
+            self.assertEqual((authors["burst_groups"], authors["burst_authors"]), (0, 0))
+            self.assertEqual(devai.read_burst_posts(os.path.join(out, "burst_posts.csv")), {})
 
             a = Namespace(posts=os.path.join(out, "posts.csv"), meta=os.path.join(out, "meta.json"),
                           authors=os.path.join(out, "authors.json"), min_tag_posts=1, min_rank_tag_posts=1,
@@ -298,6 +481,65 @@ class PipelineTests(unittest.TestCase):
                 self.assertIn(heading, rep)
             self.assertIn("AI-Assisted", rep)
             self.assertIn("No group meets the rule.", rep)
+            self.assertIn("Sweep check: every page URL carried a per-sweep value in `item`", rep)
+            self.assertIn("0 of 4 pages came back with headers", rep)
+            self.assertIn("1 ids were listed twice", rep)
+            self.assertIn("over 10 minutes on 2 pages", rep)
+            self.assertIn("Pages served from a cache of different ages", rep)
+
+    def test_collect_with_other_bust_param(self):
+        with tempfile.TemporaryDirectory() as out:
+            args = Namespace(since="2026-08-12", per_page=1000, max_pages=50, budget_minutes=5, pause=0,
+                             out_dir=out, bust_param="ut")
+            with mock.patch.object(devai, "Client", StubClient):
+                self.assertEqual(devai.collect(args), 0)
+            listing = [p for p in StubClient.seen_paths if p.startswith("/articles/latest")]
+            self.assertTrue(all("&ut=" in p and "&item=" not in p for p in listing))
+            with open(os.path.join(out, "meta.json"), encoding="utf-8") as f:
+                self.assertEqual(json.load(f)["bust_param"], "ut")
+
+    def test_collect_without_cache_bust_counts_cached_pages(self):
+        with tempfile.TemporaryDirectory() as out:
+            args = Namespace(since="2026-08-12", per_page=1000, max_pages=50, budget_minutes=5, pause=0,
+                             out_dir=out, cache_bust=False)
+            with mock.patch.object(devai, "Client", CachedStubClient):
+                self.assertEqual(devai.collect(args), 0)
+            listing = [p for p in CachedStubClient.seen_paths if p.startswith("/articles/latest")]
+            self.assertEqual(listing[0], "/articles/latest?per_page=1000&page=1")
+            self.assertTrue(all("item=" not in p for p in listing))
+            with open(os.path.join(out, "meta.json"), encoding="utf-8") as f:
+                meta = json.load(f)
+            self.assertFalse(meta["cache_bust"])
+            self.assertIsNone(meta["bust_param"])
+            self.assertEqual(meta["coverage"]["cached_pages"], 4)
+            self.assertEqual(meta["coverage"]["header_samples"][0]["headers"]["Age"], "4311")
+            self.assertIn("could come from a cache", devai.coverage_line(meta))
+
+    def test_collect_writes_author_bursts(self):
+        with tempfile.TemporaryDirectory() as out:
+            args = Namespace(since="2026-08-12", per_page=1000, max_pages=50, budget_minutes=5, pause=0,
+                             out_dir=out)
+            with mock.patch.object(devai, "Client", BurstStubClient):
+                self.assertEqual(devai.collect(args), 0)
+            bp = os.path.join(out, "burst_posts.csv")
+            with open(bp, encoding="utf-8") as f:
+                self.assertEqual(f.readline().strip(), "article_id,group")
+            self.assertEqual(devai.read_burst_posts(bp), {100 + i: 1 for i in range(110)})
+            with open(os.path.join(out, "authors.json"), encoding="utf-8") as f:
+                authors = json.load(f)
+            self.assertEqual((authors["burst_groups"], authors["burst_authors"]), (1, 1))
+            a = Namespace(posts=os.path.join(out, "posts.csv"), meta=os.path.join(out, "meta.json"),
+                          authors=os.path.join(out, "authors.json"), burst_posts=bp, min_tag_posts=1,
+                          min_rank_tag_posts=1, out_dir=out)
+            self.assertEqual(devai.analyse(a), 0)
+            with open(os.path.join(out, "summary.json"), encoding="utf-8") as f:
+                s = json.load(f)
+            self.assertEqual([g["posts"] for g in s["bursts"]], [110])
+            self.assertAlmostEqual(s["bursts"][0]["median_gap_minutes"], 2.0)
+            self.assertEqual(s["since_launch_excluding_bursts"]["posts"], 0)
+            with open(os.path.join(out, "REPORT.md"), encoding="utf-8") as f:
+                rep = f.read()
+            self.assertIn("Distinct authors behind these groups: 1.", rep)
 
     def test_report_without_meta(self):
         with tempfile.TemporaryDirectory() as out:

@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "snapshot_at": "2026-10-15T18:31:27+00:00",
+  "finished_at": "2026-10-15T19:22:01+00:00",
+  "since": "2026-08-12",
+  "launch": "2026-08-26T18:05:39+00:00",
+  "launch_source": "article 4419574",
+  "pages": 422,
+  "per_page": 1000,
+  "posts": 348461,
+  "oldest": "2026-08-12T00:00:00+00:00",
+  "newest": "2026-10-15T18:31:03+00:00",
+  "stopped": "reached --since",
+  "requests": 426,
+  "minutes": 50.6
+}

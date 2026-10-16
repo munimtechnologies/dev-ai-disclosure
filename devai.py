@@ -13,12 +13,34 @@ can be counted, not sampled.
             --since and writes one row per post: id, time, tier, language,
             reading time, reactions, comments, tags, cover image, organisation,
             cross-post. Author ids are held in memory only, to count distinct
-            authors per tier and per week; usernames and ids are never written.
+            authors per tier and per week and to find one author's machine-paced
+            bursts; usernames and ids are never written. Burst membership is
+            saved as article id and group number only (burst_posts.csv).
   analyse   tier shares per day and week, tiers by tag, reactions and comments
             by tier compared within the same publishing day, post traits by
-            tier, author concentration, and machine-paced bursts (one exact tag
-            set and one tier posted minutes apart) with every headline number
-            recomputed without them; writes REPORT.md and CSV/JSON tables.
+            tier, author concentration, and machine-paced bursts (one author,
+            one exact tag set and one tier, posted minutes apart) with every
+            headline number recomputed without them; writes REPORT.md and
+            CSV/JSON tables.
+
+0.3.0: a burst must come from one author. The 0.2.0 rule grouped by tag set and
+tier only, so it also caught different authors sharing a popular or required tag
+set (challenge entries); its count is still reported for comparison.
+
+0.4.0: sweeps that repeat the same page URLs get pages served from DEV's edge
+cache at different ages (the same page 275 came back identical in four sweeps
+over 42 hours), so consecutive pages overlap or leave holes and a sweep silently
+loses posts (414,144 on 2026-10-14, 348,461 a day later, 295,145 two days later,
+same window). collect counts pages that report a cache hit, counts ids listed
+twice, and measures the time hole between consecutive pages; the numbers go into
+meta.json and the report's coverage line.
+
+0.4.1: 0.4.0 put its per-sweep token in a `sweep` query parameter, but Forem's
+Fastly config (config/fastly/snippets/safe_params_list.vcl) removes every query
+parameter that is not on an allowlist before the cache lookup, so `sweep` never
+reached the cache key. The token now goes in `item`, which is on the allowlist
+and which neither the API controllers nor ArticleApiIndexService read. collect
+also keeps the cache headers of every hundredth page as samples.
 
 Uses only DEV's public API (no key). Made by MV2 of Munim, Inc., with AI agents
 working in his name.
@@ -39,9 +61,9 @@ import urllib.request
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 
-VERSION = "0.2.0"
+VERSION = "0.4.1"
 API = "https://dev.to/api"
-UA = f"mv2-dev-ai-disclosure-study/{VERSION} (MV2 of Munim, Inc.; munimversion2@gmail.com)"
+UA = f"mv2-dev-ai-disclosure-study/{VERSION} (MV2 of Munim, Inc.; mv2@munimtech.com)"
 PAUSE = 1.0
 # Day of DEV's announcement; replaced by the announcement's exact time when readable.
 LAUNCH = "2026-08-26T00:00:00Z"
@@ -51,10 +73,18 @@ LABELLED = LEVELS[1:]
 NAMES = {"not_disclosed": "Not disclosed", "no_ai": "Hand Written (no AI)",
          "some_ai": "AI-Assisted", "fully_autonomous": "Fully Autonomous"}
 MIN_AGE_DAYS = 7
-# A burst: at least this many posts since launch with one exact non-empty tag set and one
-# tier, with a median gap between consecutive posts of at most this many minutes.
+# A burst: at least this many posts since launch by one author with one exact non-empty tag
+# set and one tier, with a median gap between consecutive posts of at most this many minutes.
 BURST_MIN_POSTS = 100
 BURST_MAX_GAP_MINUTES = 15.0
+# A time hole between consecutive listing pages longer than this is reported as a page
+# the sweep may have skipped over (DEV gets a post every few seconds).
+HOLE_FLAG_SECONDS = 600
+CACHE_HEADERS = ("Age", "X-Cache", "X-Cache-Hits", "Cache-Control", "Date")
+# Query parameter that carries the per-sweep token. It must be on Forem's Fastly allowlist
+# (anything else is stripped before the cache lookup) and must not be read by the endpoint.
+BUST_PARAM = "item"
+HEADER_SAMPLE_EVERY = 100
 POST_COLS = ["article_id", "published_at", "date", "level", "language", "reading_time",
              "reactions", "comments", "n_tags", "tags", "has_cover", "is_org",
              "crossposted", "edited_after_launch"]
@@ -111,6 +141,7 @@ class Client:
     def __init__(self, pause=PAUSE):
         self.pause = pause
         self.requests = 0
+        self.last_headers = {}
 
     def get(self, path, tries=6):
         url = API + path
@@ -118,6 +149,7 @@ class Client:
             req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
             try:
                 with urllib.request.urlopen(req, timeout=180) as r:
+                    self.last_headers = {k: r.headers.get(k) for k in CACHE_HEADERS if r.headers.get(k)}
                     data = json.load(r)
                 self.requests += 1
                 time.sleep(self.pause)
@@ -141,6 +173,41 @@ class Client:
                 log(f"retry {i + 1} for {url}: {e}")
                 time.sleep(5 * (i + 1))
         return None
+
+
+# ---------------------------------------------------------------- sweep checks
+
+def listing_path(per_page, page, token="", param=BUST_PARAM):
+    """URL path of one listing page. token, when set, is a per-sweep value put in query
+    parameter param: DEV's edge cache keys on the URL after dropping parameters that are not
+    on Forem's allowlist, so param must be an allowlisted one for each page to be built fresh."""
+    path = f"/articles/latest?per_page={per_page}&page={page}"
+    return f"{path}&{param}={token}" if token else path
+
+
+def page_edges(batch):
+    """(oldest, newest) published_at of a listing page, or (None, None)."""
+    pubs = [parse_time(a["published_at"]) for a in batch if a.get("published_at")]
+    return (min(pubs), max(pubs)) if pubs else (None, None)
+
+
+def page_hole_seconds(prev_oldest, cur_newest):
+    """Seconds between the previous page's oldest post and this page's newest. Positive is
+    a hole no page covered (posts published then were never listed); negative is overlap
+    (the ids are listed twice and dropped once)."""
+    if prev_oldest is None or cur_newest is None:
+        return None
+    return (prev_oldest - cur_newest).total_seconds()
+
+
+def cached_page(headers):
+    """True when the response headers say the page was served from a cache."""
+    try:
+        if int((headers or {}).get("Age") or 0) > 0:
+            return True
+    except ValueError:
+        pass
+    return "HIT" in str((headers or {}).get("X-Cache") or "").upper()
 
 
 def author_summary(authors):
@@ -183,6 +250,39 @@ def weekly_author_summary(weekly):
     return out
 
 
+def find_author_bursts(keyed, min_posts=BURST_MIN_POSTS, max_gap_minutes=BURST_MAX_GAP_MINUTES):
+    """Machine-paced groups by one author: keyed maps (author, tags, tier) to a list of
+    (timestamp, article_id) for posts since launch with a non-empty tag set. A group needs
+    at least min_posts posts and a median gap between consecutive posts of at most
+    max_gap_minutes. Returns (lists of article ids, largest first; number of distinct
+    authors behind them). The keys, and so the authors, are dropped."""
+    groups, authors = [], set()
+    for key, posts in keyed.items():
+        if len(posts) < max(min_posts, 2):
+            continue
+        ts = sorted(t for t, _ in posts)
+        if median([b - a for a, b in zip(ts, ts[1:])]) / 60 <= max_gap_minutes:
+            groups.append(sorted(aid for _, aid in posts))
+            authors.add(key[0])
+    groups.sort(key=lambda g: (-len(g), g[0]))
+    return groups, len(authors)
+
+
+def write_burst_posts(path, groups):
+    """One row per post in a burst: article id and group number (1 = largest). No author."""
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        wr = csv.writer(f)
+        wr.writerow(["article_id", "group"])
+        for n, ids in enumerate(groups, 1):
+            for aid in ids:
+                wr.writerow([aid, n])
+
+
+def read_burst_posts(path):
+    with open(path, newline="", encoding="utf-8") as f:
+        return {int(r["article_id"]): int(r["group"]) for r in csv.DictReader(f)}
+
+
 def collect(args):
     os.makedirs(args.out_dir, exist_ok=True)
     t0 = time.time()
@@ -190,18 +290,26 @@ def collect(args):
     started = now_iso()
     since = parse_time(args.since + "T00:00:00Z")
     launch = parse_time(LAUNCH)
+    min_posts = getattr(args, "burst_min_posts", BURST_MIN_POSTS)
+    max_gap = getattr(args, "burst_max_gap_minutes", BURST_MAX_GAP_MINUTES)
+    param = getattr(args, "bust_param", BUST_PARAM) or BUST_PARAM
+    token = started.replace("-", "").replace(":", "").replace("+", "") if getattr(args, "cache_bust", True) else ""
     post = client.get(LAUNCH_POST)
     launch_source = "default"
     if isinstance(post, dict) and post.get("published_at"):
         launch = parse_time(post["published_at"])
         launch_source = f"article {post.get('id')}"
-    log(f"launch: {launch.isoformat()} ({launch_source})")
+    log(f"launch: {launch.isoformat()} ({launch_source}); sweep token: {f'{param}={token}' if token else 'none'}")
     seen = set()
     authors = defaultdict(Counter)
     weekly_authors = defaultdict(dict)
+    keyed = defaultdict(list)
     pages = written = old_pages = failures = 0
     oldest = newest = None
     stopped = "max pages"
+    cov = {"pages": 0, "cached_pages": 0, "duplicate_ids": 0, "max_hole_seconds": 0.0,
+           "pages_with_hole_over_10min": 0, "holes": [], "header_samples": []}
+    prev_oldest = None
     with open(os.path.join(args.out_dir, "posts.csv"), "w", newline="", encoding="utf-8") as f:
         wr = csv.DictWriter(f, fieldnames=POST_COLS)
         wr.writeheader()
@@ -209,7 +317,7 @@ def collect(args):
             if (time.time() - t0) / 60 > args.budget_minutes:
                 stopped = "time budget"
                 break
-            batch = client.get(f"/articles/latest?per_page={args.per_page}&page={page}")
+            batch = client.get(listing_path(args.per_page, page, token, param))
             if batch is None:
                 failures += 1
                 log(f"page {page} unreadable ({failures} in a row)")
@@ -222,9 +330,27 @@ def collect(args):
                 stopped = "end of listing"
                 break
             pages += 1
+            cov["pages"] = pages
+            headers = dict(getattr(client, "last_headers", {}) or {})
+            if cached_page(headers):
+                cov["cached_pages"] += 1
+            if page == 1 or page % HEADER_SAMPLE_EVERY == 0:
+                cov["header_samples"].append({"page": page, "headers": headers})
             dated = [a for a in batch if a.get("published_at")]
+            p_oldest, p_newest = page_edges(dated)
+            hole = page_hole_seconds(prev_oldest, p_newest)
+            if hole is not None:
+                cov["max_hole_seconds"] = max(cov["max_hole_seconds"], hole)
+                if hole > HOLE_FLAG_SECONDS:
+                    cov["pages_with_hole_over_10min"] += 1
+                    if len(cov["holes"]) < 50:
+                        cov["holes"].append({"page": page, "seconds": round(hole), "before": prev_oldest.isoformat(),
+                                             "after": p_newest.isoformat()})
+            if p_oldest is not None:
+                prev_oldest = p_oldest
             for a in dated:
                 if a.get("id") in seen:
+                    cov["duplicate_ids"] += 1
                     continue
                 pub = parse_time(a["published_at"])
                 if pub < since:
@@ -239,6 +365,8 @@ def collect(args):
                 if uid is not None and pub >= launch:
                     authors[uid][row["level"]] += 1
                     weekly_authors[week_start(row["date"], launch)].setdefault(uid, set()).add(row["level"])
+                    if row["tags"]:
+                        keyed[(uid, row["tags"], row["level"])].append((pub.timestamp(), row["article_id"]))
             if dated and all(parse_time(a["published_at"]) < since for a in dated):
                 old_pages += 1
                 if old_pages >= 2:
@@ -247,12 +375,19 @@ def collect(args):
             else:
                 old_pages = 0
             if page % 25 == 0:
-                log(f"  page {page}: {written} posts, oldest {oldest}, {(time.time() - t0) / 60:.1f} min")
+                log(f"  page {page}: {written} posts, oldest {oldest}, {(time.time() - t0) / 60:.1f} min; "
+                    f"cached pages {cov['cached_pages']}, duplicate ids {cov['duplicate_ids']}, "
+                    f"holes over 10 min {cov['pages_with_hole_over_10min']}; headers {headers}")
+    cov["max_hole_minutes"] = round(cov["max_hole_seconds"] / 60, 1)
     with open(os.path.join(args.out_dir, "posts.csv"), "rb") as src, \
             gzip.open(os.path.join(args.out_dir, "posts.csv.gz"), "wb") as dst:
         shutil.copyfileobj(src, dst)
+    groups, burst_authors = find_author_bursts(keyed, min_posts, max_gap)
+    write_burst_posts(os.path.join(args.out_dir, "burst_posts.csv"), groups)
     summary = author_summary(authors)
     summary["weekly"] = weekly_author_summary(weekly_authors)
+    summary["burst_groups"] = len(groups)
+    summary["burst_authors"] = burst_authors
     with open(os.path.join(args.out_dir, "authors.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
     meta = {"version": VERSION, "snapshot_at": started, "finished_at": now_iso(), "since": args.since,
@@ -261,10 +396,13 @@ def collect(args):
             "oldest": oldest.isoformat() if oldest else None,
             "newest": newest.isoformat() if newest else None,
             "stopped": stopped, "requests": client.requests,
-            "minutes": round((time.time() - t0) / 60, 1)}
+            "minutes": round((time.time() - t0) / 60, 1),
+            "cache_bust": bool(token), "bust_param": param if token else None, "coverage": cov,
+            "burst_rule": {"min_posts": min_posts, "max_median_gap_minutes": max_gap, "one_author": True}}
     with open(os.path.join(args.out_dir, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
     log(json.dumps(meta))
+    log(f"one-author bursts: {len(groups)} groups, {sum(len(g) for g in groups)} posts, {burst_authors} authors")
     return 0
 
 
@@ -346,9 +484,10 @@ def engagement(eng, cutoff_ts, en_only=False):
 
 
 def find_bursts(path, launch, min_posts=BURST_MIN_POSTS, max_gap_minutes=BURST_MAX_GAP_MINUTES):
-    """Machine-paced groups among posts since launch: one exact non-empty tag set and one
-    tier, at least min_posts posts, median gap between consecutive posts at most
-    max_gap_minutes. Returns (groups, set of (tags, level) keys)."""
+    """The 0.2.0 tag-set rule, kept for comparison and for snapshots without burst_posts.csv:
+    machine-paced groups among posts since launch with one exact non-empty tag set and one
+    tier, whoever posted them; at least min_posts posts, median gap between consecutive posts
+    at most max_gap_minutes. Returns (groups, set of (tags, level) keys)."""
     times = defaultdict(list)
     reacts = Counter()
     with open(path, newline="", encoding="utf-8") as f:
@@ -376,6 +515,21 @@ def find_bursts(path, launch, min_posts=BURST_MIN_POSTS, max_gap_minutes=BURST_M
     return groups, {(g["tags"], g["level"]) for g in groups}
 
 
+def group_stats(gstats):
+    """Burst table rows from per-group accumulators: {group: {tags, level, ts, reactions}}."""
+    out = []
+    for st in gstats.values():
+        ts = sorted(st["ts"])
+        gaps = [b - a for a, b in zip(ts, ts[1:])]
+        out.append({"tags": st["tags"], "level": st["level"], "posts": len(ts),
+                    "first": datetime.fromtimestamp(ts[0], timezone.utc).isoformat(timespec="seconds"),
+                    "last": datetime.fromtimestamp(ts[-1], timezone.utc).isoformat(timespec="seconds"),
+                    "median_gap_minutes": round(median(gaps) / 60, 2) if gaps else 0.0,
+                    "reactions": st["reactions"]})
+    out.sort(key=lambda g: (-g["posts"], g["first"]))
+    return out
+
+
 def analyse(args):
     os.makedirs(args.out_dir, exist_ok=True)
     meta = {}
@@ -385,7 +539,16 @@ def analyse(args):
     launch = parse_time(meta.get("launch") or LAUNCH)
     min_posts = getattr(args, "burst_min_posts", BURST_MIN_POSTS)
     max_gap = getattr(args, "burst_max_gap_minutes", BURST_MAX_GAP_MINUTES)
-    bursts, burst_keys = find_bursts(args.posts, launch, min_posts, max_gap)
+    burst_file = getattr(args, "burst_posts", "") or ""
+    per_author = bool(burst_file) and os.path.exists(burst_file)
+    if per_author and meta.get("burst_rule"):
+        # Membership was decided while collecting; report the rule that decided it.
+        min_posts = meta["burst_rule"].get("min_posts", min_posts)
+        max_gap = meta["burst_rule"].get("max_median_gap_minutes", max_gap)
+    tagset_bursts, tagset_keys = find_bursts(args.posts, launch, min_posts, max_gap)
+    members = read_burst_posts(burst_file) if per_author else {}
+    gstats = {}
+    tagset_overlap = 0
     daily, daily_x = defaultdict(Counter), defaultdict(Counter)
     tags = defaultdict(Counter)
     overall, overall_x, pre, challenge = Counter(), Counter(), Counter(), Counter()
@@ -397,7 +560,17 @@ def analyse(args):
         for r in csv.DictReader(f):
             pub = parse_time(r["published_at"])
             lvl = r["level"]
-            in_burst = pub >= launch and (r["tags"], lvl) in burst_keys
+            in_tagset = pub >= launch and (r["tags"], lvl) in tagset_keys
+            if per_author:
+                g = members.get(int(r["article_id"])) if pub >= launch else None
+                in_burst = g is not None
+                if in_burst:
+                    st = gstats.setdefault(g, {"tags": r["tags"], "level": lvl, "ts": [], "reactions": 0})
+                    st["ts"].append(pub.timestamp())
+                    st["reactions"] += int(r["reactions"])
+                    tagset_overlap += int(in_tagset)
+            else:
+                in_burst = in_tagset
             daily[r["date"]][lvl] += 1
             if not in_burst:
                 daily_x[r["date"]][lvl] += 1
@@ -429,6 +602,7 @@ def analyse(args):
             eng.append(e)
             if not in_burst:
                 eng_x.append(e)
+    bursts = group_stats(gstats) if per_author else tagset_bursts
     snap = parse_time(meta["snapshot_at"]) if meta.get("snapshot_at") else latest
     cutoff = (snap - timedelta(days=MIN_AGE_DAYS)) if snap else launch
 
@@ -478,8 +652,10 @@ def analyse(args):
                               labelled=sum(pre[lvl] for lvl in LABELLED)),
         "since_launch": dict(shares(overall), counts={k: overall[k] for k in sorted(overall)}),
         "weekly": weekly_shares(daily, launch),
-        "burst_rule": {"min_posts": min_posts, "max_median_gap_minutes": max_gap},
+        "burst_rule": {"min_posts": min_posts, "max_median_gap_minutes": max_gap, "one_author": per_author},
         "bursts": bursts,
+        "tagset_rule_comparison": {"groups": len(tagset_bursts), "posts": sum(g["posts"] for g in tagset_bursts),
+                                   "posts_also_in_author_bursts": tagset_overlap} if per_author else None,
         "since_launch_excluding_bursts": dict(shares(overall_x), counts={k: overall_x[k] for k in sorted(overall_x)}),
         "weekly_excluding_bursts": weekly_shares(daily_x, launch),
         "engagement_all": engagement(eng, cutoff.timestamp()),
@@ -496,7 +672,8 @@ def analyse(args):
         json.dump(summary, f, indent=2)
     with open(os.path.join(args.out_dir, "REPORT.md"), "w", encoding="utf-8") as f:
         f.write(report(summary))
-    log(json.dumps({k: summary[k] for k in ("before_launch", "since_launch", "since_launch_excluding_bursts")}))
+    log(json.dumps({k: summary[k] for k in ("before_launch", "since_launch", "since_launch_excluding_bursts",
+                                            "burst_rule", "tagset_rule_comparison")}))
     log(f"bursts: {len(bursts)} groups, {sum(g['posts'] for g in bursts)} posts")
     return 0
 
@@ -517,8 +694,25 @@ def engagement_table(e):
     return out
 
 
+def coverage_line(m):
+    """One sentence on how sound the sweep was, from meta.json's coverage block."""
+    cov = (m or {}).get("coverage")
+    if not cov:
+        return ""
+    if m.get("cache_bust"):
+        how = (f"every page URL carried a per-sweep value in `{m.get('bust_param') or BUST_PARAM}`, a query "
+               "parameter on Forem's edge-cache allowlist, so no page should come from an earlier sweep's cache")
+    else:
+        how = "page URLs were the same as in earlier sweeps, so pages could come from a cache"
+    return (f"Sweep check: {how}; {cov.get('cached_pages', 0)} of {cov.get('pages', 0)} pages came back with headers "
+            f"saying they were served from a cache; {cov.get('duplicate_ids', 0)} ids were listed twice and dropped once; "
+            f"the largest time hole between consecutive pages was {cov.get('max_hole_minutes', 0)} minutes, "
+            f"over 10 minutes on {cov.get('pages_with_hole_over_10min', 0)} pages.")
+
+
 def report(s):
     m = s.get("meta") or {}
+    a = s.get("authors") or {}
     sl = s["since_launch"]
     out = ["# How DEV authors use AI-disclosure labels", "",
            "Every public post in DEV's /articles/latest listing"
@@ -529,6 +723,9 @@ def report(s):
     if m:
         out += [f"Coverage: {m.get('posts')} posts over {m.get('pages')} listing pages "
                 f"(oldest {m.get('oldest')}, newest {m.get('newest')}); stopped at: {m.get('stopped')}.", ""]
+        cl = coverage_line(m)
+        if cl:
+            out += [cl, ""]
     out += ["## Since launch: which label posts carry", "",
             f"{sl['posts']} posts published after the announcement.", "",
             "| Label | Posts | Share |", "|---|---|---|"]
@@ -551,11 +748,27 @@ def report(s):
     bursts = s.get("bursts") or []
     if "since_launch_excluding_bursts" in s:
         x = s["since_launch_excluding_bursts"]
-        out += ["", "## Bursts: one tag set, one label, machine pace", "",
-                f"A burst is a group of at least {rule.get('min_posts')} posts since launch that share one exact, "
-                f"non-empty tag set and one label, with a median gap of at most {rule.get('max_median_gap_minutes')} "
-                "minutes between consecutive posts. Rule set after the first snapshot showed one such group; "
-                "every group it finds is listed, so a reader can judge what was left out.", ""]
+        if rule.get("one_author"):
+            out += ["", "## Bursts: one author, one tag set, one label, machine pace", "",
+                    f"A burst is a group of at least {rule.get('min_posts')} posts since launch by one author that "
+                    f"share one exact, non-empty tag set and one label, with a median gap of at most "
+                    f"{rule.get('max_median_gap_minutes')} minutes between consecutive posts. Authors are matched in "
+                    "memory while collecting and never written; only article ids and group numbers are saved "
+                    "(burst_posts.csv). Every group it finds is listed, so a reader can judge what was left out.", ""]
+            if a.get("burst_authors") is not None:
+                out += [f"Distinct authors behind these groups: {a['burst_authors']}.", ""]
+            c = s.get("tagset_rule_comparison")
+            if c:
+                out += [f"devai.py 0.2.0 used the same rule without the one-author condition, so it could also catch "
+                        "different authors who share a popular or required tag set (for example, challenge tags). "
+                        f"On this snapshot it finds {c['groups']} groups with {c['posts']} posts, of which "
+                        f"{c['posts_also_in_author_bursts']} are in a one-author burst.", ""]
+        else:
+            out += ["", "## Bursts: one tag set, one label, machine pace", "",
+                    f"A burst is a group of at least {rule.get('min_posts')} posts since launch that share one exact, "
+                    f"non-empty tag set and one label, with a median gap of at most {rule.get('max_median_gap_minutes')} "
+                    "minutes between consecutive posts, whoever posted them (posts from different authors can share a "
+                    "group). Every group it finds is listed, so a reader can judge what was left out.", ""]
         if bursts:
             out += [f"{len(bursts)} groups, {sum(g['posts'] for g in bursts)} posts.", "",
                     "| Tags | Label | Posts | First | Last | Median gap (min) | Reactions |", "|---|---|---|---|---|---|---|"]
@@ -575,7 +788,6 @@ def report(s):
         for w in s["weekly_excluding_bursts"]:
             out.append(f"| {w['week']} | {w['days']} | {w['posts']} | {pc(w['no_ai'])} | {pc(w['some_ai'])} | "
                        f"{pc(w['fully_autonomous'])} | {pc(w['any_label'])} |")
-    a = s.get("authors") or {}
     if a.get("weekly"):
         out += ["", "## Authors week by week", "",
                 "Share of the week's active authors (since launch) who used each label at least once that week. "
@@ -635,6 +847,10 @@ def report(s):
         out += ["", f"Hacktoberfest challenge entries (tag hf26challenge): {h['posts']} posts, "
                 f"{pc(h['any_label'])} labelled (Hand Written {pc(h['no_ai'])}, AI-Assisted {pc(h['some_ai'])}, "
                 f"Fully Autonomous {pc(h['fully_autonomous'])})."]
+    burst_limit = ("- The burst rule catches only one author's exact repeats of one tag set; a campaign that varies "
+                   "its tags or spreads over many accounts is missed." if rule.get("one_author") else
+                   "- The burst rule catches only exact repeats of one tag set; a campaign that varies its tags is "
+                   "missed, and different authors who share a popular or required tag set can be caught.")
     out += ["", "## Limits", "",
             "- A label is what the author chose, not a measurement of how a post was written. "
             "Not disclosed does not mean no AI.",
@@ -644,7 +860,9 @@ def report(s):
             f"{MIN_AGE_DAYS} days are left out of that comparison, and the day percentile removes the effect of age.",
             "- Labels go with other differences (topic, language, author habits, spam), so differences in "
             "reactions are correlations, not effects of the label.",
-            "- The burst rule catches only exact repeats of one tag set; a campaign that varies its tags is missed.",
+            burst_limit,
+            "- The listing is read page by page by offset. Pages served from a cache of different ages overlap or "
+            "leave holes, and posts in a hole are never seen; the sweep check line above reports what this sweep saw.",
             "- Posts deleted or unpublished before the snapshot are missing.", ""]
     return "\n".join(out)
 
@@ -658,12 +876,20 @@ def main(argv=None):
     c.add_argument("--max-pages", type=int, default=1000)
     c.add_argument("--budget-minutes", type=float, default=150)
     c.add_argument("--pause", type=float, default=PAUSE)
+    c.add_argument("--no-cache-bust", dest="cache_bust", action="store_false",
+                   help="reuse plain page URLs (pages may then come from DEV's edge cache at mixed ages)")
+    c.add_argument("--bust-param", default=BUST_PARAM,
+                   help="query parameter for the per-sweep token; must be on Forem's Fastly allowlist")
+    c.add_argument("--burst-min-posts", type=int, default=BURST_MIN_POSTS)
+    c.add_argument("--burst-max-gap-minutes", type=float, default=BURST_MAX_GAP_MINUTES)
     c.add_argument("--out-dir", default="out")
-    c.set_defaults(func=collect)
+    c.set_defaults(func=collect, cache_bust=True)
     a = sub.add_parser("analyse")
     a.add_argument("--posts", required=True)
     a.add_argument("--meta", default="")
     a.add_argument("--authors", default="")
+    a.add_argument("--burst-posts", default="", help="burst_posts.csv from collect (one-author rule); "
+                                                     "without it the 0.2.0 tag-set rule is used")
     a.add_argument("--min-tag-posts", type=int, default=100)
     a.add_argument("--min-rank-tag-posts", type=int, default=1000)
     a.add_argument("--burst-min-posts", type=int, default=BURST_MIN_POSTS)

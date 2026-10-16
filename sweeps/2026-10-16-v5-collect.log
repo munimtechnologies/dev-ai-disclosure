@@ -1,0 +1,19 @@
+launch: 2026-08-26T18:05:39+00:00 (article 4419574)
+  page 25: 24956 posts, oldest 2026-10-11 10:05:35+00:00, 1.7 min
+  page 50: 47949 posts, oldest 2026-10-05 14:14:49+00:00, 3.4 min
+  page 75: 68246 posts, oldest 2026-09-29 07:27:27+00:00, 4.7 min
+  page 100: 81060 posts, oldest 2026-09-25 14:38:57+00:00, 5.7 min
+  page 125: 96364 posts, oldest 2026-09-22 06:52:33+00:00, 6.9 min
+  page 150: 115105 posts, oldest 2026-09-18 06:35:45+00:00, 8.3 min
+  page 175: 130429 posts, oldest 2026-09-14 16:15:05+00:00, 9.1 min
+  page 200: 149128 posts, oldest 2026-09-10 13:58:13+00:00, 10.4 min
+  page 225: 164530 posts, oldest 2026-09-07 15:38:30+00:00, 11.2 min
+  page 250: 179626 posts, oldest 2026-09-03 16:31:32+00:00, 12.7 min
+  page 275: 197453 posts, oldest 2026-08-31 02:15:36+00:00, 13.9 min
+  page 300: 212335 posts, oldest 2026-08-27 17:21:39+00:00, 15.0 min
+  page 325: 229626 posts, oldest 2026-08-24 18:04:15+00:00, 18.2 min
+  page 350: 247382 posts, oldest 2026-08-20 16:25:10+00:00, 20.0 min
+  page 375: 265634 posts, oldest 2026-08-17 15:42:46+00:00, 22.2 min
+  page 400: 282363 posts, oldest 2026-08-14 12:19:23+00:00, 24.2 min
+{"version": "0.3.0", "snapshot_at": "2026-10-16T12:44:25+00:00", "finished_at": "2026-10-16T13:10:01+00:00", "since": "2026-08-12", "launch": "2026-08-26T18:05:39+00:00", "launch_source": "article 4419574", "pages": 425, "per_page": 1000, "posts": 295145, "oldest": "2026-08-12T00:00:00+00:00", "newest": "2026-10-16T12:44:20+00:00", "stopped": "reached --since", "requests": 427, "minutes": 25.6, "burst_rule": {"min_posts": 100, "max_median_gap_minutes": 15.0, "one_author": true}}
+one-author bursts: 22 groups, 7910 posts, 14 authors

@@ -1,0 +1,23 @@
+launch: 2026-08-26T18:05:39+00:00 (article 4419574)
+  page 25: 24996 posts, oldest 2026-10-10 10:03:06+00:00, 1.9 min
+  page 50: 49992 posts, oldest 2026-10-04 19:12:09+00:00, 3.8 min
+  page 75: 74989 posts, oldest 2026-09-28 21:47:22+00:00, 5.7 min
+  page 100: 98867 posts, oldest 2026-09-25 05:23:10+00:00, 7.6 min
+retry 1 for https://dev.to/api/articles/latest?per_page=1000&page=117: The read operation timed out
+  page 125: 120871 posts, oldest 2026-09-21 10:42:33+00:00, 12.5 min
+  page 150: 141932 posts, oldest 2026-09-17 17:00:04+00:00, 14.5 min
+  page 175: 160779 posts, oldest 2026-09-14 16:15:05+00:00, 16.4 min
+retry 1 for https://dev.to/api/articles/latest?per_page=1000&page=190: The read operation timed out
+  page 200: 178847 posts, oldest 2026-09-10 13:58:13+00:00, 21.4 min
+  page 225: 199547 posts, oldest 2026-09-07 15:38:30+00:00, 23.2 min
+  page 250: 220390 posts, oldest 2026-09-03 10:27:31+00:00, 25.1 min
+  page 275: 242377 posts, oldest 2026-08-31 02:15:36+00:00, 27.1 min
+  page 300: 260543 posts, oldest 2026-08-27 07:36:53+00:00, 29.0 min
+retry 1 for https://dev.to/api/articles/latest?per_page=1000&page=307: The read operation timed out
+retry 1 for https://dev.to/api/articles/latest?per_page=1000&page=317: The read operation timed out
+  page 325: 279376 posts, oldest 2026-08-24 10:12:16+00:00, 38.4 min
+  page 350: 297374 posts, oldest 2026-08-20 16:25:10+00:00, 40.5 min
+retry 1 for https://dev.to/api/articles/latest?per_page=1000&page=371: The read operation timed out
+  page 375: 315297 posts, oldest 2026-08-17 10:16:30+00:00, 45.6 min
+  page 400: 335174 posts, oldest 2026-08-13 18:41:39+00:00, 48.1 min
+{"version": "0.2.0", "snapshot_at": "2026-10-15T18:31:27+00:00", "finished_at": "2026-10-15T19:22:01+00:00", "since": "2026-08-12", "launch": "2026-08-26T18:05:39+00:00", "launch_source": "article 4419574", "pages": 422, "per_page": 1000, "posts": 348461, "oldest": "2026-08-12T00:00:00+00:00", "newest": "2026-10-15T18:31:03+00:00", "stopped": "reached --since", "requests": 426, "minutes": 50.6}
