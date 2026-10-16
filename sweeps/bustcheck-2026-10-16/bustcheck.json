@@ -1,0 +1,307 @@
+{
+ "summary": {
+  "version": "0.1.0",
+  "started_at": "2026-10-16T16:31:47+00:00",
+  "finished_at": "2026-10-16T16:32:19+00:00",
+  "per_page": 1000,
+  "verdicts": {
+   "sweep": [
+    "stripped",
+    "stripped",
+    "stripped"
+   ],
+   "item": [
+    "kept",
+    "kept",
+    "kept"
+   ]
+  }
+ },
+ "pages": [
+  {
+   "page": 2,
+   "plain": {
+    "http": 200,
+    "headers": {
+     "age": "0",
+     "x-cache": "MISS, MISS",
+     "x-cache-hits": "0, 0",
+     "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000049-CHI",
+     "cache-control": "public, no-cache",
+     "date": "Fri, 16 Oct 2026 16:31:50 GMT",
+     "vary": "Accept-Encoding, Origin, X-Loggedin"
+    },
+    "cached": false,
+    "items": 1000,
+    "oldest": "2026-10-16T09:27:55+00:00",
+    "newest": "2026-10-16T12:28:52+00:00"
+   },
+   "sweep": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "1",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000087-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:31:51 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-10-16T09:27:55+00:00",
+     "newest": "2026-10-16T12:28:52+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "2",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000048-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:31:52 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-10-16T09:27:55+00:00",
+     "newest": "2026-10-16T12:28:52+00:00"
+    }
+   ],
+   "item": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "0",
+      "x-cache": "MISS, MISS",
+      "x-cache-hits": "0, 0",
+      "x-served-by": "cache-den-kden1300095-DEN, cache-chi-kigq8000127-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:31:56 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": false,
+     "items": 1000,
+     "oldest": "2026-10-16T09:27:55+00:00",
+     "newest": "2026-10-16T12:28:52+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "1",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300095-DEN, cache-chi-kigq8000055-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:31:57 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-10-16T09:27:55+00:00",
+     "newest": "2026-10-16T12:28:52+00:00"
+    }
+   ],
+   "verdict": {
+    "sweep": "stripped",
+    "item": "kept"
+   },
+   "same_ids_as_plain": {
+    "sweep": true,
+    "item": true
+   }
+  },
+  {
+   "page": 150,
+   "plain": {
+    "http": 200,
+    "headers": {
+     "age": "29936",
+     "x-cache": "MISS, HIT",
+     "x-cache-hits": "0, 0",
+     "x-served-by": "cache-den-kden1300040-DEN, cache-chi-kigq8000063-CHI",
+     "cache-control": "public, no-cache",
+     "date": "Fri, 16 Oct 2026 16:31:58 GMT",
+     "vary": "Accept-Encoding, Origin, X-Loggedin"
+    },
+    "cached": true,
+    "items": 1000,
+    "oldest": "2026-09-18T16:06:16+00:00",
+    "newest": "2026-09-18T19:54:22+00:00"
+   },
+   "sweep": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "29937",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300040-DEN, cache-chi-kigq8000105-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:31:59 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-09-18T16:06:16+00:00",
+     "newest": "2026-09-18T19:54:22+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "29938",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300040-DEN, cache-chi-kigq8000085-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:01 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-09-18T16:06:16+00:00",
+     "newest": "2026-09-18T19:54:22+00:00"
+    }
+   ],
+   "item": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "0",
+      "x-cache": "MISS, MISS",
+      "x-cache-hits": "0, 0",
+      "x-served-by": "cache-den-kden1300094-DEN, cache-chi-kigq8000123-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:05 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": false,
+     "items": 1000,
+     "oldest": "2026-09-19T00:42:25+00:00",
+     "newest": "2026-09-19T04:55:17+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "1",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300094-DEN, cache-chi-kigq8000093-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:07 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-09-19T00:42:25+00:00",
+     "newest": "2026-09-19T04:55:17+00:00"
+    }
+   ],
+   "verdict": {
+    "sweep": "stripped",
+    "item": "kept"
+   },
+   "same_ids_as_plain": {
+    "sweep": true,
+    "item": false
+   }
+  },
+  {
+   "page": 300,
+   "plain": {
+    "http": 200,
+    "headers": {
+     "age": "2843",
+     "x-cache": "MISS, HIT",
+     "x-cache-hits": "0, 0",
+     "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000169-CHI",
+     "cache-control": "public, no-cache",
+     "date": "Fri, 16 Oct 2026 16:32:08 GMT",
+     "vary": "Accept-Encoding, Origin, X-Loggedin"
+    },
+    "cached": true,
+    "items": 1000,
+    "oldest": "2026-08-28T11:33:12+00:00",
+    "newest": "2026-08-28T14:38:40+00:00"
+   },
+   "sweep": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "2844",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000118-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:09 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-08-28T11:33:12+00:00",
+     "newest": "2026-08-28T14:38:40+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "2845",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000090-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:10 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-08-28T11:33:12+00:00",
+     "newest": "2026-08-28T14:38:40+00:00"
+    }
+   ],
+   "item": [
+    {
+     "http": 200,
+     "headers": {
+      "age": "0",
+      "x-cache": "MISS, MISS",
+      "x-cache-hits": "0, 0",
+      "x-served-by": "cache-den-kden1300084-DEN, cache-chi-kigq8000083-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:16 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": false,
+     "items": 1000,
+     "oldest": "2026-08-28T12:04:53+00:00",
+     "newest": "2026-08-28T15:19:11+00:00"
+    },
+    {
+     "http": 200,
+     "headers": {
+      "age": "1",
+      "x-cache": "MISS, HIT",
+      "x-cache-hits": "0, 1",
+      "x-served-by": "cache-den-kden1300084-DEN, cache-chi-kigq8000034-CHI",
+      "cache-control": "public, no-cache",
+      "date": "Fri, 16 Oct 2026 16:32:17 GMT",
+      "vary": "Accept-Encoding, Origin, X-Loggedin"
+     },
+     "cached": true,
+     "items": 1000,
+     "oldest": "2026-08-28T12:04:53+00:00",
+     "newest": "2026-08-28T15:19:11+00:00"
+    }
+   ],
+   "verdict": {
+    "sweep": "stripped",
+    "item": "kept"
+   },
+   "same_ids_as_plain": {
+    "sweep": true,
+    "item": false
+   }
+  }
+ ]
+}

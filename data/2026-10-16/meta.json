@@ -1,0 +1,84 @@
+{
+  "version": "0.4.1",
+  "snapshot_at": "2026-10-16T16:32:19+00:00",
+  "finished_at": "2026-10-16T17:15:34+00:00",
+  "since": "2026-08-12",
+  "launch": "2026-08-26T18:05:39+00:00",
+  "launch_source": "article 4419574",
+  "pages": 426,
+  "per_page": 1000,
+  "posts": 423767,
+  "oldest": "2026-08-12T00:00:00+00:00",
+  "newest": "2026-10-16T16:31:38+00:00",
+  "stopped": "reached --since",
+  "requests": 427,
+  "minutes": 43.3,
+  "cache_bust": true,
+  "bust_param": "item",
+  "coverage": {
+    "pages": 426,
+    "cached_pages": 13,
+    "duplicate_ids": 169,
+    "max_hole_seconds": 130.0,
+    "pages_with_hole_over_10min": 0,
+    "holes": [],
+    "header_samples": [
+      {
+        "page": 1,
+        "headers": {
+          "Age": "0",
+          "X-Cache": "MISS, MISS",
+          "X-Cache-Hits": "0, 0",
+          "Cache-Control": "public, no-cache",
+          "Date": "Fri, 16 Oct 2026 16:32:23 GMT"
+        }
+      },
+      {
+        "page": 100,
+        "headers": {
+          "Age": "0",
+          "X-Cache": "MISS, MISS",
+          "X-Cache-Hits": "0, 0",
+          "Cache-Control": "public, no-cache",
+          "Date": "Fri, 16 Oct 2026 16:40:02 GMT"
+        }
+      },
+      {
+        "page": 200,
+        "headers": {
+          "Age": "0",
+          "X-Cache": "MISS, MISS",
+          "X-Cache-Hits": "0, 0",
+          "Cache-Control": "public, no-cache",
+          "Date": "Fri, 16 Oct 2026 16:49:06 GMT"
+        }
+      },
+      {
+        "page": 300,
+        "headers": {
+          "Age": "0",
+          "X-Cache": "MISS, MISS",
+          "X-Cache-Hits": "0, 0",
+          "Cache-Control": "public, no-cache",
+          "Date": "Fri, 16 Oct 2026 17:00:10 GMT"
+        }
+      },
+      {
+        "page": 400,
+        "headers": {
+          "Age": "0",
+          "X-Cache": "MISS, MISS",
+          "X-Cache-Hits": "0, 0",
+          "Cache-Control": "public, no-cache",
+          "Date": "Fri, 16 Oct 2026 17:11:47 GMT"
+        }
+      }
+    ],
+    "max_hole_minutes": 2.2
+  },
+  "burst_rule": {
+    "min_posts": 100,
+    "max_median_gap_minutes": 15.0,
+    "one_author": true
+  }
+}

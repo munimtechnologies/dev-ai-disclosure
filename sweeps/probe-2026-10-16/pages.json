@@ -1,0 +1,422 @@
+{
+ "1": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3954240,
+  "max_id": 4863307,
+  "oldest": "2026-10-16T11:52:30+00:00",
+  "newest": "2026-10-16T15:43:43+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:05 GMT",
+   "x-served-by": "cache-den-kden1300029-DEN, cache-chi-kigq8000047-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "2": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4201500,
+  "max_id": 4862202,
+  "oldest": "2026-10-16T08:28:01+00:00",
+  "newest": "2026-10-16T11:52:27+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:08 GMT",
+   "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000155-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "3": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4739580,
+  "max_id": 4861625,
+  "oldest": "2026-10-16T04:53:54+00:00",
+  "newest": "2026-10-16T08:27:50+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:11 GMT",
+   "x-served-by": "cache-den-kden1300093-DEN, cache-chi-kigq8000099-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "40": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4062295,
+  "max_id": 4816323,
+  "oldest": "2026-10-08T03:18:02+00:00",
+  "newest": "2026-10-08T07:39:20+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:15 GMT",
+   "x-served-by": "cache-den-kden1300031-DEN, cache-chi-kigq8000091-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "41": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3214020,
+  "max_id": 4859362,
+  "oldest": "2026-10-07T18:24:21+00:00",
+  "newest": "2026-10-08T03:18:02+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:18 GMT",
+   "x-served-by": "cache-den-kden1300093-DEN, cache-chi-kigq8000062-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "42": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3851330,
+  "max_id": 4814094,
+  "oldest": "2026-10-07T13:33:33+00:00",
+  "newest": "2026-10-07T18:24:18+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:21 GMT",
+   "x-served-by": "cache-den-kden1300056-DEN, cache-chi-kigq8000054-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "80": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3175888,
+  "max_id": 4794294,
+  "oldest": "2026-09-28T19:19:12+00:00",
+  "newest": "2026-09-29T01:56:08+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:25 GMT",
+   "x-served-by": "cache-den-kden1300056-DEN, cache-chi-kigq8000176-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "81": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4546761,
+  "max_id": 4794293,
+  "oldest": "2026-09-28T16:05:23+00:00",
+  "newest": "2026-09-28T19:18:53+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:28 GMT",
+   "x-served-by": "cache-den-kden1300067-DEN, cache-chi-kigq8000133-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "82": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3891703,
+  "max_id": 4852256,
+  "oldest": "2026-09-28T11:40:00+00:00",
+  "newest": "2026-09-28T13:55:20+00:00",
+  "http": 200,
+  "headers": {
+   "age": "10498",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:28 GMT",
+   "x-served-by": "cache-den-kden1300030-DEN, cache-chi-kigq8000062-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "120": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4514854,
+  "max_id": 4751327,
+  "oldest": "2026-09-23T07:15:59+00:00",
+  "newest": "2026-09-23T09:22:21+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:33 GMT",
+   "x-served-by": "cache-den-kden1300034-DEN, cache-chi-kigq8000066-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "121": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3254617,
+  "max_id": 4733222,
+  "oldest": "2026-09-22T20:13:08+00:00",
+  "newest": "2026-09-23T01:12:35+00:00",
+  "http": 200,
+  "headers": {
+   "age": "27185",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:34 GMT",
+   "x-served-by": "cache-den-kden1300090-DEN, cache-chi-kigq8000176-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "122": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3174316,
+  "max_id": 4733222,
+  "oldest": "2026-09-22T22:18:57+00:00",
+  "newest": "2026-09-23T02:53:22+00:00",
+  "http": 200,
+  "headers": {
+   "age": "10409",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:35 GMT",
+   "x-served-by": "cache-den-kden1300090-DEN, cache-chi-kigq8000039-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "200": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3920427,
+  "max_id": 4667662,
+  "oldest": "2026-09-11T09:31:57+00:00",
+  "newest": "2026-09-11T11:29:14+00:00",
+  "http": 200,
+  "headers": {
+   "age": "26961",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:36 GMT",
+   "x-served-by": "cache-den-kden1300038-DEN, cache-chi-kigq8000094-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "201": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3171945,
+  "max_id": 4750591,
+  "oldest": "2026-09-10T22:22:44+00:00",
+  "newest": "2026-09-11T03:41:14+00:00",
+  "http": 200,
+  "headers": {
+   "age": "75102",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:37 GMT",
+   "x-served-by": "cache-den-kden1300034-DEN, cache-chi-kigq8000165-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "202": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4395010,
+  "max_id": 4630642,
+  "oldest": "2026-09-11T05:01:07+00:00",
+  "newest": "2026-09-11T07:14:30+00:00",
+  "http": 200,
+  "headers": {
+   "age": "26956",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:38 GMT",
+   "x-served-by": "cache-den-kden1300096-DEN, cache-chi-kigq8000082-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "300": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 1645906,
+  "max_id": 4751312,
+  "oldest": "2026-08-28T11:33:12+00:00",
+  "newest": "2026-08-28T14:38:40+00:00",
+  "http": 200,
+  "headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:45 GMT",
+   "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000124-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "301": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3839274,
+  "max_id": 4503707,
+  "oldest": "2026-08-27T05:45:56+00:00",
+  "newest": "2026-08-27T07:36:53+00:00",
+  "http": 200,
+  "headers": {
+   "age": "159216",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:45 GMT",
+   "x-served-by": "cache-den-kden1300055-DEN, cache-chi-kigq8000173-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "302": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 4352688,
+  "max_id": 4516819,
+  "oldest": "2026-08-28T04:33:28+00:00",
+  "newest": "2026-08-28T07:06:08+00:00",
+  "http": 200,
+  "headers": {
+   "age": "9917",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:46 GMT",
+   "x-served-by": "cache-den-kden1300081-DEN, cache-chi-kigq8000144-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "400": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3555531,
+  "max_id": 4484809,
+  "oldest": "2026-08-14T18:31:54+00:00",
+  "newest": "2026-08-15T00:13:15+00:00",
+  "http": 200,
+  "headers": {
+   "age": "9375",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:47 GMT",
+   "x-served-by": "cache-den-kden1300033-DEN, cache-chi-kigq8000119-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "401": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3520850,
+  "max_id": 4751305,
+  "oldest": "2026-08-13T11:40:14+00:00",
+  "newest": "2026-08-13T14:35:19+00:00",
+  "http": 200,
+  "headers": {
+   "age": "158509",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:48 GMT",
+   "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000117-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "402": {
+  "items": 1000,
+  "without_published_at": 0,
+  "without_id": 0,
+  "dup_within_page": 0,
+  "min_id": 3646455,
+  "max_id": 4561698,
+  "oldest": "2026-08-14T11:34:54+00:00",
+  "newest": "2026-08-14T14:17:28+00:00",
+  "http": 200,
+  "headers": {
+   "age": "9369",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:49 GMT",
+   "x-served-by": "cache-den-kden1300051-DEN, cache-chi-kigq8000097-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ }
+}

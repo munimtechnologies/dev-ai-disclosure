@@ -1,0 +1,100 @@
+{
+  "authors": 51961,
+  "by_level": {
+    "fully_autonomous": {
+      "authors": 1482,
+      "posts": 4147,
+      "top10_authors_share": 0.272,
+      "authors_for_half_of_posts": 98
+    },
+    "no_ai": {
+      "authors": 606,
+      "posts": 925,
+      "top10_authors_share": 0.169,
+      "authors_for_half_of_posts": 144
+    },
+    "not_disclosed": {
+      "authors": 48524,
+      "posts": 300406,
+      "top10_authors_share": 0.065,
+      "authors_for_half_of_posts": 1479
+    },
+    "some_ai": {
+      "authors": 3321,
+      "posts": 8261,
+      "top10_authors_share": 0.316,
+      "authors_for_half_of_posts": 169
+    }
+  },
+  "authors_with_any_label": 5162,
+  "authors_with_two_or_more_labels": 241,
+  "authors_mixing_labelled_and_undisclosed": 1725,
+  "weekly": [
+    {
+      "week": "2026-08-26",
+      "authors": 10375,
+      "no_ai": 78,
+      "some_ai": 381,
+      "fully_autonomous": 96,
+      "any_label": 544
+    },
+    {
+      "week": "2026-09-02",
+      "authors": 11927,
+      "no_ai": 87,
+      "some_ai": 450,
+      "fully_autonomous": 160,
+      "any_label": 683
+    },
+    {
+      "week": "2026-09-09",
+      "authors": 11871,
+      "no_ai": 90,
+      "some_ai": 420,
+      "fully_autonomous": 169,
+      "any_label": 665
+    },
+    {
+      "week": "2026-09-16",
+      "authors": 12378,
+      "no_ai": 105,
+      "some_ai": 450,
+      "fully_autonomous": 173,
+      "any_label": 709
+    },
+    {
+      "week": "2026-09-23",
+      "authors": 13580,
+      "no_ai": 102,
+      "some_ai": 561,
+      "fully_autonomous": 244,
+      "any_label": 894
+    },
+    {
+      "week": "2026-09-30",
+      "authors": 12998,
+      "no_ai": 111,
+      "some_ai": 827,
+      "fully_autonomous": 368,
+      "any_label": 1276
+    },
+    {
+      "week": "2026-10-07",
+      "authors": 13560,
+      "no_ai": 113,
+      "some_ai": 922,
+      "fully_autonomous": 470,
+      "any_label": 1472
+    },
+    {
+      "week": "2026-10-14",
+      "authors": 6795,
+      "no_ai": 50,
+      "some_ai": 321,
+      "fully_autonomous": 230,
+      "any_label": 593
+    }
+  ],
+  "burst_groups": 35,
+  "burst_authors": 22
+}

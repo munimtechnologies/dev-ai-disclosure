@@ -1,0 +1,366 @@
+{
+ "version": "0.1.0",
+ "started_at": "2026-10-16T15:44:01.769772+00:00",
+ "finished_at": "2026-10-16T15:49:35.449150+00:00",
+ "requests": 173,
+ "minutes": 5.6,
+ "per_page": 1000,
+ "pages": [
+  1,
+  2,
+  3,
+  40,
+  41,
+  42,
+  80,
+  81,
+  82,
+  120,
+  121,
+  122,
+  200,
+  201,
+  202,
+  300,
+  301,
+  302,
+  400,
+  401,
+  402
+ ],
+ "items_per_page": {
+  "1": 1000,
+  "2": 1000,
+  "3": 1000,
+  "40": 1000,
+  "41": 1000,
+  "42": 1000,
+  "80": 1000,
+  "81": 1000,
+  "82": 1000,
+  "120": 1000,
+  "121": 1000,
+  "122": 1000,
+  "200": 1000,
+  "201": 1000,
+  "202": 1000,
+  "300": 1000,
+  "301": 1000,
+  "302": 1000,
+  "400": 1000,
+  "401": 1000,
+  "402": 1000
+ },
+ "page_headers": {
+  "1": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:05 GMT",
+   "x-served-by": "cache-den-kden1300029-DEN, cache-chi-kigq8000047-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "2": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:08 GMT",
+   "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000155-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "3": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:11 GMT",
+   "x-served-by": "cache-den-kden1300093-DEN, cache-chi-kigq8000099-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "40": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:15 GMT",
+   "x-served-by": "cache-den-kden1300031-DEN, cache-chi-kigq8000091-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "41": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:18 GMT",
+   "x-served-by": "cache-den-kden1300093-DEN, cache-chi-kigq8000062-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "42": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:21 GMT",
+   "x-served-by": "cache-den-kden1300056-DEN, cache-chi-kigq8000054-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "80": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:25 GMT",
+   "x-served-by": "cache-den-kden1300056-DEN, cache-chi-kigq8000176-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "81": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:28 GMT",
+   "x-served-by": "cache-den-kden1300067-DEN, cache-chi-kigq8000133-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "82": {
+   "age": "10498",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:28 GMT",
+   "x-served-by": "cache-den-kden1300030-DEN, cache-chi-kigq8000062-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "120": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:33 GMT",
+   "x-served-by": "cache-den-kden1300034-DEN, cache-chi-kigq8000066-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "121": {
+   "age": "27185",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:34 GMT",
+   "x-served-by": "cache-den-kden1300090-DEN, cache-chi-kigq8000176-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "122": {
+   "age": "10409",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:35 GMT",
+   "x-served-by": "cache-den-kden1300090-DEN, cache-chi-kigq8000039-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "200": {
+   "age": "26961",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:36 GMT",
+   "x-served-by": "cache-den-kden1300038-DEN, cache-chi-kigq8000094-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "201": {
+   "age": "75102",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:37 GMT",
+   "x-served-by": "cache-den-kden1300034-DEN, cache-chi-kigq8000165-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "202": {
+   "age": "26956",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:38 GMT",
+   "x-served-by": "cache-den-kden1300096-DEN, cache-chi-kigq8000082-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "300": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:45 GMT",
+   "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000124-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "301": {
+   "age": "159216",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:45 GMT",
+   "x-served-by": "cache-den-kden1300055-DEN, cache-chi-kigq8000173-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "302": {
+   "age": "9917",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:46 GMT",
+   "x-served-by": "cache-den-kden1300081-DEN, cache-chi-kigq8000144-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "400": {
+   "age": "9375",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:47 GMT",
+   "x-served-by": "cache-den-kden1300033-DEN, cache-chi-kigq8000119-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "401": {
+   "age": "158509",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:48 GMT",
+   "x-served-by": "cache-den-kden1300037-DEN, cache-chi-kigq8000117-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "402": {
+   "age": "9369",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:49 GMT",
+   "x-served-by": "cache-den-kden1300051-DEN, cache-chi-kigq8000097-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ },
+ "without_published_at_total": 0,
+ "adjacent": {
+  "1-2": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "2-3": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "40-41": {
+   "overlap_ids": 1,
+   "time_order_ok": true
+  },
+  "41-42": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "80-81": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "81-82": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "120-121": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "121-122": {
+   "overlap_ids": 653,
+   "time_order_ok": false
+  },
+  "200-201": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "201-202": {
+   "overlap_ids": 0,
+   "time_order_ok": false
+  },
+  "300-301": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "301-302": {
+   "overlap_ids": 0,
+   "time_order_ok": false
+  },
+  "400-401": {
+   "overlap_ids": 0,
+   "time_order_ok": true
+  },
+  "401-402": {
+   "overlap_ids": 0,
+   "time_order_ok": false
+  }
+ },
+ "probe_classes": {
+  "live_outside_window": 124,
+  "not_public": 16
+ },
+ "probed": 140,
+ "live_absent_in_window": 0,
+ "live_in_window": 0,
+ "specific": [
+  {
+   "id": 4392326,
+   "http": 200,
+   "listed_in_probe_pages": false,
+   "published_at": "2026-08-14T02:30:00Z",
+   "type_of": "article",
+   "reactions": 0,
+   "comments": 0,
+   "n_tags": 4,
+   "language": "en",
+   "reading_time": 2,
+   "has_org": false,
+   "subforem_id": 1
+  },
+  {
+   "id": 4847820,
+   "http": 200,
+   "listed_in_probe_pages": false,
+   "published_at": "2026-10-14T04:50:13Z",
+   "type_of": "article",
+   "reactions": 0,
+   "comments": 0,
+   "n_tags": 4,
+   "language": "en",
+   "reading_time": 3,
+   "has_org": false,
+   "subforem_id": 1
+  }
+ ],
+ "restability": {
+  "page": 300,
+  "first_items": 1000,
+  "second_items": 1000,
+  "same_ids": 1000,
+  "minutes_apart": 4.8,
+  "first_headers": {
+   "age": "0",
+   "x-cache": "MISS, MISS",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:44:45 GMT",
+   "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000124-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  },
+  "second_headers": {
+   "age": "289",
+   "x-cache": "MISS, HIT",
+   "x-cache-hits": "0, 0",
+   "cache-control": "public, no-cache",
+   "date": "Fri, 16 Oct 2026 15:49:34 GMT",
+   "x-served-by": "cache-den-kden1300050-DEN, cache-chi-kigq8000146-CHI",
+   "via": "1.1 heroku-router, 1.1 varnish, 1.1 varnish"
+  }
+ }
+}
