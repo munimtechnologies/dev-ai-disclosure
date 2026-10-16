@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "base": "v7",
+  "window": [
+    "2026-08-12",
+    "2026-10-13"
+  ],
+  "sweeps": {
+    "v1": {
+      "days": 63,
+      "posts_base": 409939,
+      "posts": 410060,
+      "ratio": 1.0003,
+      "max_abs_day_diff": 17,
+      "max_abs_day": "2026-10-10",
+      "max_day_loss": 0.0043,
+      "max_day_loss_day": "2026-10-10",
+      "days_within_1pct": 63,
+      "days_losing_over_5pct": 0
+    },
+    "v3": {
+      "days": 63,
+      "posts_base": 409939,
+      "posts": 339340,
+      "ratio": 0.8278,
+      "max_abs_day_diff": 4932,
+      "max_abs_day": "2026-09-18",
+      "max_day_loss": 0.7426,
+      "max_day_loss_day": "2026-09-13",
+      "days_within_1pct": 18,
+      "days_losing_over_5pct": 41
+    },
+    "v5": {
+      "days": 63,
+      "posts_base": 409939,
+      "posts": 282291,
+      "ratio": 0.6886,
+      "max_abs_day_diff": 3999,
+      "max_abs_day": "2026-08-17",
+      "max_day_loss": 0.751,
+      "max_day_loss_day": "2026-09-27",
+      "days_within_1pct": 7,
+      "days_losing_over_5pct": 55
+    },
+    "v7": {
+      "days": 63,
+      "posts_base": 409939,
+      "posts": 409939,
+      "ratio": 1.0,
+      "max_abs_day_diff": 0,
+      "max_abs_day": null,
+      "max_day_loss": 0.0,
+      "max_day_loss_day": null,
+      "days_within_1pct": 63,
+      "days_losing_over_5pct": 0
+    }
+  }
+}
