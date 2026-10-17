@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "version": "0.1.0",
+    "snapshot_at": "2026-10-16T23:16:38+00:00",
+    "since": "2026-08-27",
+    "posts": 313206,
+    "stopped": "reached since",
+    "minutes": 28.2,
+    "bust_param": "item",
+    "per_page": 1000,
+    "coverage": {
+      "pages": 316,
+      "cached_pages": 9,
+      "duplicate_ids": 36,
+      "max_hole_minutes": 2.0
+    }
+  },
+  "gate": {
+    "checked_days": 49,
+    "worst_day": "2026-10-09",
+    "worst_diff": -0.0004,
+    "pass": true
+  },
+  "predictions": {
+    "P1": {
+      "holds": true,
+      "gap_test": -0.7404,
+      "gap_placebo": 0.0035
+    },
+    "P2": {
+      "holds": false,
+      "heavy_test": 0.183,
+      "heavy_placebo": 0.6846,
+      "occasional_test": 0.4121,
+      "occasional_placebo": 0.5433
+    },
+    "verdict": "MIXED"
+  },
+  "windows": {
+    "A": {
+      "first": "2026-08-27",
+      "last": "2026-09-11",
+      "days": 16,
+      "posts": 114005,
+      "authors": 20314,
+      "posts_per_day": 7125.3125,
+      "engaged_per_day": 750.1875,
+      "zero_engagement_per_day": 6375.125
+    },
+    "B": {
+      "first": "2026-09-12",
+      "last": "2026-09-27",
+      "days": 16,
+      "posts": 110482,
+      "authors": 20106,
+      "posts_per_day": 6905.125,
+      "engaged_per_day": 724.625,
+      "zero_engagement_per_day": 6180.5
+    },
+    "C": {
+      "first": "2026-09-30",
+      "last": "2026-10-14",
+      "days": 15,
+      "posts": 64369,
+      "authors": 23450,
+      "posts_per_day": 4291.2667,
+      "engaged_per_day": 930.5333,
+      "zero_engagement_per_day": 3360.7333
+    }
+  },
+  "transitions": [
+    {
+      "from": "A",
+      "to": "B",
+      "kind": "placebo",
+      "classes": {
+        "heavy": {
+          "authors": 1067,
+          "posts_from": 63237,
+          "posts_to": 43295,
+          "per_day_from": 3952.3125,
+          "per_day_to": 2705.9375,
+          "retention": 0.6846,
+          "authors_stopped": 176,
+          "per_day_from_stopped": 1024.875
+        },
+        "regular": {
+          "authors": 3879,
+          "posts_from": 29439,
+          "posts_to": 22381,
+          "per_day_from": 1839.9375,
+          "per_day_to": 1398.8125,
+          "retention": 0.7603,
+          "authors_stopped": 961,
+          "per_day_from_stopped": 398.375
+        },
+        "occasional": {
+          "authors": 15368,
+          "posts_from": 21329,
+          "posts_to": 11587,
+          "per_day_from": 1333.0625,
+          "per_day_to": 724.1875,
+          "retention": 0.5433,
+          "authors_stopped": 11073,
+          "per_day_from_stopped": 882.0
+        }
+      },
+      "newcomers": {
+        "authors": 12002,
+        "posts": 33219,
+        "per_day_to": 2076.1875
+      },
+      "authored_per_day_from": 7125.3125,
+      "authored_per_day_to": 6905.125,
+      "engaged_ratio": 0.9659,
+      "zero_engagement_ratio": 0.9695
+    },
+    {
+      "from": "B",
+      "to": "C",
+      "kind": "test",
+      "classes": {
+        "heavy": {
+          "authors": 1043,
+          "posts_from": 59459,
+          "posts_to": 10201,
+          "per_day_from": 3716.1875,
+          "per_day_to": 680.0667,
+          "retention": 0.183,
+          "authors_stopped": 585,
+          "per_day_from_stopped": 2188.3125
+        },
+        "regular": {
+          "authors": 4095,
+          "posts_from": 30154,
+          "posts_to": 11789,
+          "per_day_from": 1884.625,
+          "per_day_to": 785.9333,
+          "retention": 0.417,
+          "authors_stopped": 1796,
+          "per_day_from_stopped": 802.4375
+        },
+        "occasional": {
+          "authors": 14968,
+          "posts_from": 20869,
+          "posts_to": 8063,
+          "per_day_from": 1304.3125,
+          "per_day_to": 537.5333,
+          "retention": 0.4121,
+          "authors_stopped": 11029,
+          "per_day_from_stopped": 896.6875
+        }
+      },
+      "newcomers": {
+        "authors": 16754,
+        "posts": 34316,
+        "per_day_to": 2287.7333
+      },
+      "authored_per_day_from": 6905.125,
+      "authored_per_day_to": 4291.2667,
+      "engaged_ratio": 1.2842,
+      "zero_engagement_ratio": 0.5438
+    }
+  ]
+}

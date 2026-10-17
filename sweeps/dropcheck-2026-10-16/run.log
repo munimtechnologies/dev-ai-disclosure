@@ -1,0 +1,17 @@
+===== run-01-python: python -m unittest -v
+
+===== run-02-python: python dropcheck.py --out-dir /out --budget-minutes 150
+  page 25: 24999 posts, 1.8 min, coverage {'pages': 25, 'cached_pages': 0, 'duplicate_ids': 1, 'max_hole_minutes': 0.6}
+  page 50: 49996 posts, 3.8 min, coverage {'pages': 50, 'cached_pages': 0, 'duplicate_ids': 4, 'max_hole_minutes': 1.8}
+  page 75: 74991 posts, 5.8 min, coverage {'pages': 75, 'cached_pages': 0, 'duplicate_ids': 9, 'max_hole_minutes': 1.8}
+  page 100: 99987 posts, 7.7 min, coverage {'pages': 100, 'cached_pages': 1, 'duplicate_ids': 13, 'max_hole_minutes': 1.8}
+  page 125: 124985 posts, 9.9 min, coverage {'pages': 125, 'cached_pages': 2, 'duplicate_ids': 15, 'max_hole_minutes': 1.8}
+  page 150: 149984 posts, 11.9 min, coverage {'pages': 150, 'cached_pages': 2, 'duplicate_ids': 16, 'max_hole_minutes': 1.8}
+  page 175: 174980 posts, 14.1 min, coverage {'pages': 175, 'cached_pages': 4, 'duplicate_ids': 20, 'max_hole_minutes': 2.0}
+  page 200: 199979 posts, 16.5 min, coverage {'pages': 200, 'cached_pages': 5, 'duplicate_ids': 21, 'max_hole_minutes': 2.0}
+  page 225: 224973 posts, 18.9 min, coverage {'pages': 225, 'cached_pages': 5, 'duplicate_ids': 27, 'max_hole_minutes': 2.0}
+  page 250: 249972 posts, 21.2 min, coverage {'pages': 250, 'cached_pages': 6, 'duplicate_ids': 28, 'max_hole_minutes': 2.0}
+  page 275: 274969 posts, 23.9 min, coverage {'pages': 275, 'cached_pages': 9, 'duplicate_ids': 31, 'max_hole_minutes': 2.0}
+  page 300: 299966 posts, 26.6 min, coverage {'pages': 300, 'cached_pages': 9, 'duplicate_ids': 34, 'max_hole_minutes': 2.0}
+{"version": "0.1.0", "snapshot_at": "2026-10-16T23:16:38+00:00", "since": "2026-08-27", "posts": 313206, "stopped": "reached since", "minutes": 28.2, "bust_param": "item", "per_page": 1000, "coverage": {"pages": 316, "cached_pages": 9, "duplicate_ids": 36, "max_hole_minutes": 2.0}}
+DONE verdict=MIXED gate=True

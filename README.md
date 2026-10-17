@@ -38,8 +38,8 @@ to DEV's edge cache (see below). Full tables: `data/2026-10-16/REPORT.md`.
 5. **DEV's daily post count fell by about 40% at the end of September.** Weekday posts were about
    7,000-8,000 a day through Sep 28 and 3,300-4,900 a day from Sep 30 on (weekly 45,800-52,700 before,
    28,368 and 31,137 after). Both cache-free sweeps show the same step, so it is not a counting artefact.
-   The cause is not known here; DEV's own announcements from those weeks do not mention one (by title).
-   Part of the rise in label shares is this smaller denominator.
+   A pre-registered test of one candidate cause came back MIXED (next section). Part of the rise in label
+   shares is this smaller denominator.
 6. **Challenge entries label much more often.** Hacktoberfest entries (`hf26challenge`): 17.9% labelled;
    all `devchallenge` posts: 19.0%.
 7. **Labelled posts get more reactions, which proves little.** Ranked within their own publishing day,
@@ -52,6 +52,59 @@ to DEV's edge cache (see below). Full tables: `data/2026-10-16/REPORT.md`.
 burst was 24.2% of AI-Assisted then, 23.1% now; `hf26challenge` 18.0% then, 17.9% now. The write-up's
 headline ("1 post in 25", "a quarter of AI-Assisted was one burst") still describes its own snapshot;
 the shares have moved by the new posts since, not by a correction.
+
+## Why did volume fall? A pre-registered test (verdict: MIXED)
+
+In the same days as the fall, Forem (the software behind DEV) merged three changes to its automatic spam
+handling: [#23883](https://github.com/forem/forem/pull/23883) (Sep 28),
+[#23904](https://github.com/forem/forem/pull/23904) (Sep 29) and
+[#23925](https://github.com/forem/forem/pull/23925) (Oct 2). Before looking at the data, we wrote down
+what those changes should do to the numbers if they caused the fall, with thresholds and a placebo pair of
+windows, and committed it: `sweeps/dropcheck-2026-10-16/PREREG.md` (commit 22d0af6). `dropcheck.py`
+then made one cache-fresh sweep back to Aug 27 (313,206 posts, 2026-10-16 23:16 UTC). Results:
+`sweeps/dropcheck-2026-10-16/DROPCHECK.md`.
+
+**Coverage gate: PASS.** Posts per day match the 2026-10-16 snapshot on all 49 days from Aug 27 to Oct 14
+(largest difference 0.04%).
+
+| Window | Dates | Posts/day | With a reaction or comment /day | With neither /day | Authors |
+|---|---|---|---|---|---|
+| A | Aug 27 - Sep 11 | 7,125 | 750 | 6,375 | 20,314 |
+| B | Sep 12 - Sep 27 | 6,905 | 725 | 6,180 | 20,106 |
+| C | Sep 30 - Oct 14 | 4,291 | 931 | 3,361 | 23,450 |
+
+A -> B is the placebo (no known change), B -> C the test.
+
+- **P1, the fall is in posts nobody reacted to or commented on: holds.** From B to C, posts with neither
+  fell to 0.54 of their rate while posts with at least one rose to 1.28 (gap -0.74; needed -0.15 or
+  lower). In the placebo both moved alike (0.97 and 0.97; gap 0.00).
+- **P2, heavy posters fall and occasional posters do not: fails, on its second half.** Authors with 16 or
+  more posts in B kept 0.18 of their rate in C, against 0.68 in the placebo: 0.50 lower, where at least
+  0.20 was needed, so that half holds. But authors with 1-3 posts kept 0.41 against 0.54: 0.13 lower,
+  where no more than 0.10 was allowed. One condition of P2 failing makes P2 fail.
+
+**Verdict, by the rule fixed in advance: MIXED.** The fall is consistent with the anti-spam changes, not
+proven by this test. The thresholds were not changed after the data came in.
+
+**Exploratory, not predicted** (worked out from `dropcheck.json`; read as description only):
+
+- The 1,043 heavy authors of B went from 3,716 to 680 posts a day, a fall of 3,036 a day: more than the
+  whole platform's fall (2,614 a day). 585 of them (56%) posted nothing at all in C; in the placebo, 176
+  of 1,067 (16%) did.
+- More people posted in C than in B (23,450 authors against 20,106), and authors new to the window
+  posted 2,288 a day against 2,076 in the placebo. Posts with a reaction or comment rose 28%. October is
+  also when DEV's Hacktoberfest challenge runs; whether that explains the rise was not tested.
+- Posts with no tags fell from 2,191 to 836 a day. Among tags with at least 320 posts in B, `in`, `for`,
+  `sale`, `flats`, `flat`, `rent`, `property`, `massage` and `brussels` fell to 0-8 a day, while `ai`,
+  `webdev`, `tutorial` and `devops` kept 81-91% of their rate (`tags_drop.csv`).
+- One reading of the P2 miss is that #23925 ("any automatic flag counts") also caught accounts with only
+  a few posts. That was not predicted, so it is not evidence.
+
+**Limits.** The API does not say which accounts DEV marked, so this test can only check whether the fall
+looks like what the changes would do; other changes in the same days could act the same way, and merge
+dates are not deploy dates. Reactions and comments were counted at the sweep, so C's posts had less time
+to collect them (which works against P1). Posts deleted before the sweep are missing from every window.
+No username, author id or title is written to disk; only aggregate counts are published.
 
 ## Repeat sweeps lost posts: DEV serves listing pages from an edge cache
 
@@ -71,8 +124,9 @@ The posts were not deleted: a post present in v3 and absent from v5 is still ser
 counts differ by at most 17 posts (0.43%, Oct 10), and before Oct 5 v7 is never higher than v1, as
 deletions between the two snapshots would make it. v3 and v5 lost up to three quarters of some days
 (v5: 1,225 posts on Sep 27 against 4,920 in v7). So v1, the first sweep at that page size, was coherent,
-and its published numbers stand. A day-by-day table of all four sweeps is computed by `compare.py`
-(results to follow in `sweeps/compare-2026-10-16/`).
+and its published numbers stand. Day by day (`sweeps/compare-2026-10-16/COMPARE.md`, `compare.py`): over
+the 63 full days, v3 found 82.8% and v5 68.9% of v7's posts, and they were more than 5% short on 41 and
+55 days.
 
 ### Live measurements (2026-10-16)
 
@@ -120,6 +174,19 @@ largest time hole between consecutive pages was 2.2 minutes, and no hole was ove
 - The API documentation for `/api/articles/latest` calls it "Ideal for building RSS feeds, chronological
   timelines, or 'latest posts' widgets" and does not mention edge caching.
 
+### Already known upstream
+
+Forem has known the mechanism since 2020. [forem/forem#6417](https://github.com/forem/forem/issues/6417)
+(March 2020, "Incomplete surrogate-key cache invalidation logic") says that "a new article which should
+become part of that endpoint will not flush its cache if created"; it was closed as stale in April 2026.
+The symptom has been reported in [#8780](https://github.com/forem/forem/issues/8780) (2020),
+[#13613](https://github.com/forem/forem/issues/13613), [#17531](https://github.com/forem/forem/issues/17531)
+and [#21355](https://github.com/forem/forem/issues/21355); draft PR
+[#22900](https://github.com/forem/forem/pull/22900) would purge `/api/articles/latest` on publish. We
+drafted a documentation issue, then did not file it, because these reports already cover it. What this
+repository adds is the measurement: per-page ages, which parameters reach the cache key, and how many
+posts a whole-platform count loses.
+
 ### The fix, and a correction
 
 devai 0.4.0 added a per-sweep token as `&sweep=...`. Because of the allowlist, that parameter is removed
@@ -147,8 +214,10 @@ on the next, and do not assume consecutive pages were built at the same moment.
   level, language, reading_time, reactions, comments, n_tags, tags, has_cover, is_org, crossposted,
   edited_after_launch` (no username or author id).
 - `sweeps/`: collect logs of every sweep, the v3/v5 `daily.csv` and `meta.json` as evidence for the
-  cached-listing finding, and the 2026-10-16 probe and bustcheck outputs (headers, ids and counts only;
-  no username or title).
+  cached-listing finding, the 2026-10-16 probe and bustcheck outputs (headers, ids and counts only;
+  no username or title), the four-sweep comparison (`compare-2026-10-16/`), and the drop test
+  (`dropcheck-2026-10-16/`: `PREREG.md`, `DROPCHECK.md`, `dropcheck.json`, `daily.csv` with posts per
+  day split by engagement, `tags_drop.csv`, `run.log`).
 
 ## Code
 
@@ -157,6 +226,7 @@ python bustcheck.py --out-dir out                                # ~1 min: which
 python devai.py collect --since 2026-08-12 --out-dir out        # ~45 min at one request a second
 python devai.py analyse --posts out/posts.csv --meta out/meta.json --authors out/authors.json \
     --burst-posts out/burst_posts.csv --out-dir out
+python dropcheck.py --out-dir out --budget-minutes 150           # ~30 min: the pre-registered drop test
 python -m unittest -v                                            # offline tests, no network
 ```
 
